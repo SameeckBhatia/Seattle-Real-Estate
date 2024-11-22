@@ -1,0 +1,133 @@
+---
+title: "Title"
+subtitle: "Subtitle"
+author:
+  - Sameeck Bhatia
+thanks: "Code and data are available at [https://github.com/SameeckBhatia/Seattle-Real-Estate](https://github.com/SameeckBhatia/Seattle-Real-Estate)"
+abstract: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in massa at urna ultricies lacinia eu at elit. Nam quis libero suscipit orci laoreet consequat auctor vel nunc. Curabitur viverra eleifend turpis, non mollis sem ullamcorper quis. In eros elit, tempor accumsan lectus id, lobortis interdum enim. In facilisis purus faucibus tempus pharetra. Quisque ligula dolor, cursus vehicula elit cursus, hendrerit pellentesque justo."
+date: today
+date-format: long
+toc: true
+number-sections: true
+bibliography: references.bib
+format: 
+  pdf:
+    fig.width: 6
+    fig.height: 4.5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| include: FALSE
+
+library(tidyverse)
+library(palmerpenguins)
+```
+
+
+# Introduction
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+
+Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
+
+Mauris ac lectus sed augue euismod blandit at non quam. Integer pharetra tortor sed purus iaculis ultrices. Sed quis sagittis urna. Suspendisse at hendrerit dui. Nunc venenatis nibh sit amet ante dictum, sollicitudin scelerisque est cursus. Etiam quis commodo sapien. Curabitur nisi mi, tempor eget sem non, faucibus lacinia metus. Quisque sed sapien ligula.
+
+# Data
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales. Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. [@R] [@tidyverse]
+
+## Measurement
+
+Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis. Pellentesque ut purus vitae leo rhoncus fringilla. Quisque commodo neque nec ultricies tempor.
+
+## Outcome Variables
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+## Predictor Variables
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+# Model
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+## Model Setup
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+## Model Justification
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+# Results
+
+## Result 1
+
+```{r, fig.align='center'}
+palmerpenguins::penguins |>
+  ggplot(aes(x = bill_depth_mm, y = bill_length_mm, color = species)) +
+  geom_point()
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat ut ante vestibulum sagittis. Etiam sollicitudin ligula neque, et sollicitudin erat iaculis eu. Pellentesque aliquam semper sapien, a faucibus nulla consequat vitae. Praesent in vulputate neque. Fusce fermentum tempor turpis, nec iaculis diam porta nec. Maecenas nec porta felis, at tincidunt ex. Mauris convallis tincidunt posuere. Quisque rutrum imperdiet turpis, quis bibendum est ultrices ut. Phasellus in tortor eu ligula pellentesque pellentesque. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur eleifend ac purus quis dapibus. Ut tincidunt posuere tortor, vitae venenatis nunc placerat eu. Praesent sit amet mi urna. Sed ultrices est et ligula posuere, eget molestie lorem porta. Quisque tempor, dolor porta semper aliquam, urna magna rhoncus sapien, at mattis metus nibh eleifend mi. Sed id bibendum urna, ut tempor ligula. Nulla facilisi. Nulla facilisi.
+
+## Result 2
+
+```{r, fig.align='center'}
+palmerpenguins::penguins |>
+  drop_na() |>
+  ggplot(aes(x = sex, y = body_mass_g, fill = sex)) +
+  geom_boxplot(width = 0.5) +
+  coord_flip()
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat ut ante vestibulum sagittis. Etiam sollicitudin ligula neque, et sollicitudin erat iaculis eu. Pellentesque aliquam semper sapien, a faucibus nulla consequat vitae. Praesent in vulputate neque. Fusce fermentum tempor turpis, nec iaculis diam porta nec. Maecenas nec porta felis, at tincidunt ex. Mauris convallis tincidunt posuere. Quisque rutrum imperdiet turpis, quis bibendum est ultrices ut. Phasellus in tortor eu ligula pellentesque pellentesque. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur eleifend ac purus quis dapibus. Ut tincidunt posuere tortor, vitae venenatis nunc placerat eu. Praesent sit amet mi urna. Sed ultrices est et ligula posuere, eget molestie lorem porta. Quisque tempor, dolor porta semper aliquam, urna magna rhoncus sapien, at mattis metus nibh eleifend mi. Sed id bibendum urna, ut tempor ligula. Nulla facilisi. Nulla facilisi.
+
+## Result 3
+
+```{r, fig.align='center'}
+palmerpenguins::penguins |>
+  drop_na() |>
+  ggplot(aes(x = species, y = flipper_length_mm, fill = species)) +
+  geom_violin(alpha = 0.5) +
+  geom_boxplot(width = 0.25) +
+  coord_flip()
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat ut ante vestibulum sagittis. Etiam sollicitudin ligula neque, et sollicitudin erat iaculis eu. Pellentesque aliquam semper sapien, a faucibus nulla consequat vitae. Praesent in vulputate neque. Fusce fermentum tempor turpis, nec iaculis diam porta nec. Maecenas nec porta felis, at tincidunt ex. Mauris convallis tincidunt posuere. Quisque rutrum imperdiet turpis, quis bibendum est ultrices ut. Phasellus in tortor eu ligula pellentesque pellentesque. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur eleifend ac purus quis dapibus. Ut tincidunt posuere tortor, vitae venenatis nunc placerat eu. Praesent sit amet mi urna. Sed ultrices est et ligula posuere, eget molestie lorem porta. Quisque tempor, dolor porta semper aliquam, urna magna rhoncus sapien, at mattis metus nibh eleifend mi. Sed id bibendum urna, ut tempor ligula. Nulla facilisi. Nulla facilisi. Proin mollis quam ut rutrum vulputate. Praesent commodo.
+
+\newpage
+
+# Discussion
+
+## Discussion 1
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+
+Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
+
+## Discussion 2
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+
+Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
+
+## Discussion 3
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+
+Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
+
+\newpage
+
+# Appendix {-}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+\newpage
+
+# References
