@@ -13,7 +13,7 @@
 library(tidyverse)
 library(testthat)
 
-# Loading the simulated data
+# Reading the cleaned data
 cleaned_data <- read_parquet("data/cleaned_data/cleaned_data.parquet")
 
 # Doing unit tests

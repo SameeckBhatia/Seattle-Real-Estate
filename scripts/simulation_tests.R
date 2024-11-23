@@ -13,7 +13,7 @@
 library(tidyverse)
 library(testthat)
 
-# Loading the simulated data
+# Reading the simulated data
 simulated_data <- read_csv("data/simulated_data/simulated_data.csv")
 
 # Doing unit tests
