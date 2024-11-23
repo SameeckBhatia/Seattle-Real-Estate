@@ -20,5 +20,5 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend
 ## Installation Instructions
 
 ```{r}
-install.packages(c("tidyverse"))
+install.packages(c("tidyverse", "testthat", "janitor", "arrow"))
 ```
