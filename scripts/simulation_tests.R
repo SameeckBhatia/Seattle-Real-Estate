@@ -18,6 +18,7 @@ simulated_data <- read_csv("data/simulated_data/simulated_data.csv")
 
 # Doing unit tests
 test_that("IDs are unique", {
+  n <- nrow(simulated_data)
   expect_equal(length(unique(simulated_data$id)), n)
 })
 
