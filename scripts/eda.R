@@ -6,6 +6,7 @@
 # License: MIT
 # Pre-requisites:
 #   - `tidyverse` package must be installed.
+#   - `arrow` package must be installed.
 # Any other information needed? None
 
 # Loading required libraries
