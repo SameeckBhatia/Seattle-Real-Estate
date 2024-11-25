@@ -1,12 +1,12 @@
 ---
-title: "Title"
+title: "Valuing Real Estate in Seattle Using Property Characteristics: A Machine Learning Approach"
 subtitle: "Subtitle"
 author:
   - Sameeck Bhatia
-thanks: "Code and data are available at [https://github.com/SameeckBhatia/Seattle-Real-Estate](https://github.com/SameeckBhatia/Seattle-Real-Estate)"
-abstract: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in massa at urna ultricies lacinia eu at elit. Nam quis libero suscipit orci laoreet consequat auctor vel nunc. Curabitur viverra eleifend turpis, non mollis sem ullamcorper quis. In eros elit, tempor accumsan lectus id, lobortis interdum enim. In facilisis purus faucibus tempus pharetra. Quisque ligula dolor, cursus vehicula elit cursus, hendrerit pellentesque justo."
 date: today
 date-format: long
+thanks: "Code and data are available at [https://github.com/SameeckBhatia/Seattle-Real-Estate](https://github.com/SameeckBhatia/Seattle-Real-Estate)"
+abstract: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in massa at urna ultricies lacinia eu at elit. Nam quis libero suscipit orci laoreet consequat auctor vel nunc. Curabitur viverra eleifend turpis, non mollis sem ullamcorper quis. In eros elit, tempor accumsan lectus id, lobortis interdum enim. In facilisis purus faucibus tempus pharetra. Quisque ligula dolor, cursus vehicula elit cursus, hendrerit pellentesque justo."
 toc: true
 number-sections: true
 bibliography: references.bib
@@ -25,6 +25,10 @@ execute:
 
 library(tidyverse)
 library(palmerpenguins)
+library(kableExtra)
+library(arrow)
+library(stargazer)
+library(ggpubr)
 ```
 
 
@@ -32,25 +36,95 @@ library(palmerpenguins)
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
 
-Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
+Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur.
 
-Mauris ac lectus sed augue euismod blandit at non quam. Integer pharetra tortor sed purus iaculis ultrices. Sed quis sagittis urna. Suspendisse at hendrerit dui. Nunc venenatis nibh sit amet ante dictum, sollicitudin scelerisque est cursus. Etiam quis commodo sapien. Curabitur nisi mi, tempor eget sem non, faucibus lacinia metus. Quisque sed sapien ligula.
+Donec commodo diam non arcu facilisis, sit amet egestas massa consequat. Vestibulum semper congue libero, eu vestibulum mi cursus sed. Morbi ut justo quis ligula molestie mattis. In luctus, dolor ac posuere pretium, ex ex sollicitudin ligula, a varius libero nisi sed arcu. Nulla et bibendum nunc. Morbi sit amet lorem sit amet lectus bibendum tempus aliquam sit amet lectus. Sed ligula nulla, pulvinar quis ipsum a, condimentum egestas mi. Aenean libero tortor, vehicula vitae velit sit amet, eleifend semper elit. Nam non fringilla nisi. Vivamus quis consequat odio, et consectetur risus. Proin vulputate tristique mauris vitae interdum. Phasellus efficitur dictum nibh, id dictum nisl rutrum et.
 
 # Data
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales. Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. [@R] [@tidyverse]
+## Overview
+
+The data used in this paper comes from Redfin, a real estate brokerage and mortgage company, and represents current property prices across Seattle. While the data was collected from @redfin, similar data could have been sourced from competitors like Zillow and Realtor.com, with Zillow being the largest of the three. If data from Zillow or Realtor.com had been used, the listings might vary slightly since each platform likely features different sellers and listings. However, Redfin was chosen as the source because it is the only brokerage firm that allows public downloads of its listings, helping to avoid violations of data extraction policies.
+
+The dataset includes only properties within Seattle’s official city boundaries and covers condos, townhouses, and single-family homes currently on the market. The raw data contains 27 variables, 18 of which have been included in the cleaned dataset. These include variables such as MLS number, number of bedrooms, neighborhood, and geographic coordinates. Additionally, some variables were constructed specifically for this analysis, such as `half_bath`, `property_age`, and `price_sqft`. The first two were added to enhance the dataset and valuation model, while `price_sqft` was created as an alternate response variable. Further details about these variables can be found in Appendix A. The data was analyzed using `R` [@R] and the `tidyverse` [@tidyverse] package, while visualizations have been created using `tidyverse`.
+
+## Summary Statistics
+
+```{r}
+#| output: asis
+
+data <- read_parquet("../data/cleaned_data/cleaned_data.parquet") |>
+  as.data.frame()
+
+data |>
+  select(!c("zip_code", "latitude", "longitude")) |>
+  stargazer(type = "latex", header = FALSE, digits = 2, median = TRUE, 
+            label = "tbl-stats")
+```
+
+Table \ref{tbl-stats} presents summary statistics for all original and derived numeric variables in the dataset. The mean number of bedrooms is 2.69, with a median of 3, while the mean number of bathrooms is 2.03, with a median of 2. This indicates that the typical listing has around three bedrooms and two bathrooms, commonly seen in townhouses and single-family homes. The average property size is approximately 1,710 square feet, with a median of 1,373 square feet, suggesting a positive skew in property size due to a few larger homes in the dataset. The average time a property remains on the market is around 64 days (just over 2 months), with a maximum of 878 days (nearly 2.5 years), indicating low demand in Seattle’s real estate market, especially since the data contains only active listings. The mean and median property prices are \$1,107,431 and \$775,000, respectively, while the mean and median price per square foot are \$631.41 and \$590.71, respectively. These figures highlight Seattle as one of the most expensive residential markets in the United States.
 
 ## Measurement
 
-Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis. Pellentesque ut purus vitae leo rhoncus fringilla. Quisque commodo neque nec ultricies tempor.
+In the United States, buyers and sellers have the freedom to select the real estate agent or brokerage firm they wish to work with for transactions. Consequently, agents often represent multiple listings within their region or city. Agents receive detailed information on each property from real estate appraisers, who measure variables such as the number of bedrooms, bathrooms, and square footage [@nar]. These measurement practices, except for price, are strictly regulated to ensure accuracy for all stakeholders.
+
+For property prices, appraisers typically estimate values based on the prices of recently sold comparable properties and the specific characteristics of the property. This valuation process is less regulated, as it serves primarily as a reference point for buyers and sellers. Real estate agents may gather price estimates from multiple appraisers to calculate an average. The prices observed in the data, although guided by these values, are ultimately set by the seller. All this information is uploaded to the Multiple Listing Service (MLS), a private database accessible only to agents and brokerage firms via subscription fees [@bankrate]. However, U.S. laws allow companies like Redfin, Trulia, and Zillow to extract and share MLS data with the public, fostering competition and transparency. For this study, data was sourced from the Seattle region’s MLS database.
 
 ## Outcome Variables
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+@fig-out ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+```{r fig-out, fig.width=7, fig.height=2.8, fig.cap='Distributions of Property Price and Logarithmic Property Price'}
+p1 <- data |>
+  select(price) |>
+  ggplot(aes(x = price)) +
+  geom_histogram(binwidth = 1000000, fill = "beige", color = "black") +
+  labs(x = "Price ($)", y = "Count")
+
+p2 <- data |>
+  select(price) |>
+  ggplot(aes(x = log(price))) +
+  geom_histogram(binwidth = 0.25, fill = "beige", color = "black") +
+  labs(x = " ln(Price) ($)", y = "Count")
+
+ggarrange(p1, p2, labels = c("A", "B"))
+```
+
 
 ## Predictor Variables
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+@fig-pred1 ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+```{r fig-pred1, fig.width=7, fig.height=2.9, fig.cap='Distributions of Property Type and Number of Bedrooms'}
+p3 <- data |> 
+  ggplot(aes(x = property_type)) +
+  geom_bar(fill = "beige", color = "black") +
+  labs(x = "Property Type", y = "Count")
+
+p4 <- data |> 
+  mutate(beds = as.factor(beds)) |>
+  ggplot(aes(x = beds)) +
+  geom_bar(fill = "beige", color = "black") +
+  labs(x = "Beds", y = "Count")
+
+ggarrange(p3, p4, labels = c("C", "D"))
+```
+
+@fig-pred2 ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+
+```{r fig-pred2, fig.width=7, fig.height=2.8, fig.cap='Distributions of Property Size and Property Age'}
+p5 <- data |>
+  ggplot(aes(x = sqft)) + 
+  geom_histogram(binwidth = 500, fill = "beige", color = "black") +
+  labs(x = "Size (sqft)", y = NULL)
+
+p6 <- data |> 
+  ggplot(aes(x = property_age)) + 
+  geom_histogram(binwidth = 10, fill = "beige", color = "black") +
+  labs(x = "Property Age (years)", y = NULL)
+
+ggarrange(p5, p6, labels = c("E", "F"))
+```
 
 # Model
 
@@ -58,7 +132,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl solli
 
 ## Model Setup
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl.
 
 ## Model Justification
 
@@ -124,9 +198,55 @@ Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proi
 
 \newpage
 
+\appendix
+
 # Appendix {-}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+# Additional Data Details
+
+```{r}
+data_dictionary <- data.frame(
+  Variable = c(
+    "SALE TYPE", "SOLD DATE", "PROPERTY TYPE", "ADDRESS", "CITY", 
+    "STATE OR PROVINCE", "ZIP OR POSTAL CODE", "PRICE", "BEDS", 
+    "BATHS", "LOCATION", "SQUARE FEET", "LOT SIZE", "YEAR BUILT", 
+    "DAYS ON MARKET", "$/SQUARE FEET", "HOA/MONTH", "STATUS", 
+    "NEXT OPEN HOUSE START TIME", "NEXT OPEN HOUSE END TIME", 
+    "URL", "SOURCE", "MLS#", "FAVORITE", "INTERESTED", "LATITUDE", "LONGITUDE"
+  ),
+  Description = c(
+    "Type of sale (e.g., MLS listing, new construction home, new construction plan).",
+    "Date when the property was sold.",
+    "Type of property (e.g., condo, single-family house, townhouse).",
+    "Full address of the property.",
+    "City where the property is located.",
+    "State or province where the property is located.",
+    "ZIP code of the property location.",
+    "Sale price of the property.",
+    "Number of bedrooms in the property.",
+    "Number of bathrooms in the property.",
+    "Neighbourhood of the property.",
+    "Total square footage of the property.",
+    "Lot size in square feet",
+    "Year the property was built.",
+    "Number of days the property has been listed on the market.",
+    "Price per square foot of the property.",
+    "Monthly Homeowners Association (HOA) fee, if applicable.",
+    "Current status of the property (e.g., sold, pending, active).",
+    "Start time of the next scheduled open house, if available.",
+    "End time of the next scheduled open house, if available.",
+    "URL to additional property details.",
+    "Source of the property data (e.g., MLS, Zillow).",
+    "Multiple Listing Service (MLS) identification number for the property.",
+    "Indicates whether the property is marked as a favorite (e.g., Y/N).",
+    "Indicates whether the user has expressed interest in the property (e.g., Y/N).",
+    "Latitude of the property location for geospatial analysis.",
+    "Longitude of the property location for geospatial analysis."
+  )
+)
+
+kable(data_dictionary, col.names = c("Variable", "Description"), align = "l")
+```
 
 \newpage
 
