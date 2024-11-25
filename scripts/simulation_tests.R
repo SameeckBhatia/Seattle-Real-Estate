@@ -22,12 +22,20 @@ test_that("IDs are unique", {
   expect_equal(length(unique(simulated_data$id)), n)
 })
 
-test_that("Square footage values are non-negative", {
+test_that("Square footage values are positive", {
   expect_true(all(simulated_data$sqft > 0))
 })
 
-test_that("Square footage values are non-negative", {
+test_that("Square footage values are positive", {
   expect_true(all(simulated_data$sqft > 0))
+})
+
+test_that("Age values are non-negative", {
+  expect_true(all(simulated_data$property_age >= 0))
+})
+
+test_that("Days on market values are non-negative", {
+  expect_true(all(simulated_data$days_on_market >= 0))
 })
 
 test_that("Studios have at least one bath", {

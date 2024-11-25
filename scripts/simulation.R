@@ -22,6 +22,8 @@ simulated_data <- data.frame(
   zip_code = sample(98101:98140, n, replace = TRUE),
   beds = sample(c(0:5), n, replace = TRUE, prob = c(0.05, 0.1, 0.3, 0.35, 0.15, 0.05)),
   baths = sample(c(1:4), n, replace = TRUE, prob = c(0.1, 0.2, 0.5, 0.2)),
+  property_age = round(rexp(n, 1/5)),
+  days_on_market = round(rexp(n, 1/14)),
   sqft = round(rnorm(n, 900, 100))
 ) 
 
