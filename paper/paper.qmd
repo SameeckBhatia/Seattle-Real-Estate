@@ -6,7 +6,7 @@ author:
 date: today
 date-format: long
 thanks: "Code and data are available at [https://github.com/SameeckBhatia/Seattle-Real-Estate](https://github.com/SameeckBhatia/Seattle-Real-Estate)"
-abstract: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in massa at urna ultricies lacinia eu at elit. Nam quis libero suscipit orci laoreet consequat auctor vel nunc. Curabitur viverra eleifend turpis, non mollis sem ullamcorper quis. In eros elit, tempor accumsan lectus id, lobortis interdum enim. In facilisis purus faucibus tempus pharetra. Quisque ligula dolor, cursus vehicula elit cursus, hendrerit pellentesque justo."
+abstract: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi faucibus ipsum dolor, in tincidunt justo tempor sit amet proin non turpis a orci imperdiet pretium. Aenean aliquam eros eu consectetur cursus. Proin vel tempor ante vestibulum felis nisi, ultricies sed porttitor in, viverra nec augue. Sed convallis a tortor in pretium. Vivamus metus ipsum, faucibus vitae turpis sed, sodales auctor dolor sed a orci id orci pulvinar tincidunt sed ut tellus. Morbi venenatis tempor arcu, a auctor dolor congue sit amet. Nam auctor tincidunt ligula rutrum aliquam. Sed facilisis at nulla et posuere."
 toc: true
 number-sections: true
 bibliography: references.bib
@@ -34,7 +34,7 @@ library(ggpubr)
 
 # Introduction
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies.
 
 Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur.
 
@@ -68,13 +68,13 @@ Table \ref{tbl-stats} presents summary statistics for all original and derived n
 
 In the United States, buyers and sellers have the freedom to select the real estate agent or brokerage firm they wish to work with for transactions. Consequently, agents often represent multiple listings within their region or city. Agents receive detailed information on each property from real estate appraisers, who measure variables such as the number of bedrooms, bathrooms, and square footage [@nar]. These measurement practices, except for price, are strictly regulated to ensure accuracy for all stakeholders.
 
-For property prices, appraisers typically estimate values based on the prices of recently sold comparable properties and the specific characteristics of the property. This valuation process is less regulated, as it serves primarily as a reference point for buyers and sellers. Real estate agents may gather price estimates from multiple appraisers to calculate an average. The prices observed in the data, although guided by these values, are ultimately set by the seller. All this information is uploaded to the Multiple Listing Service (MLS), a private database accessible only to agents and brokerage firms via subscription fees [@bankrate]. However, U.S. laws allow companies like Redfin, Trulia, and Zillow to extract and share MLS data with the public, fostering competition and transparency. For this study, data was sourced from the Seattle region’s MLS database.
+For property prices, appraisers typically estimate values based on the prices of recently sold comparable properties and the specific characteristics of the property. This valuation process is less regulated, as it serves primarily as a reference point for buyers and sellers. Real estate agents may gather price estimates from multiple appraisers to calculate an average. The prices observed in the data, although guided by these values, are ultimately set by the seller. All this information is uploaded to the Multiple Listing Service (MLS), a private database accessible only to agents and brokerage firms via subscription fees [@bankrate]. However, U.S. laws allow companies like Redfin, Trulia, and Zillow to extract and share MLS data with the public, fostering competition and transparency.
 
 ## Outcome Variables
 
-@fig-out ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+The primary goal of this paper is to estimate the outcome variable, price, using a valuation model. This variable represents the market value of active listings at the time of data collection, focusing exclusively on properties located in Seattle. @fig-out provides insights into the distribution of property prices. Plot A shows that property prices are highly skewed, with a maximum value near \$40,000,000 and several listings exceeding \$5,000,000. To better understand the distribution, Plot B presents the logarithmic transformation of property prices. While the transformed distribution is less extreme, it remains skewed, indicating the presence of properties with exceptionally high valuations in the Seattle real estate market.
 
-```{r fig-out, fig.width=7, fig.height=2.8, fig.cap='Distributions of Property Price and Logarithmic Property Price'}
+```{r fig-out, fig.width=7, fig.height=2.6, fig.cap='Distributions of Property Price and Logarithmic Property Price'}
 p1 <- data |>
   select(price) |>
   ggplot(aes(x = price)) +
@@ -93,9 +93,17 @@ ggarrange(p1, p2, labels = c("A", "B"))
 
 ## Predictor Variables
 
-@fig-pred1 ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+**Property Type (`property_type`):** This categorical variable identifies the type of property for each observation, based on classifications set by the MLS. The three main property types included in the analysis are "Condo/Co-op," "Single Family," and "Townhouse." These classifications are critical for valuation, as different property types possess distinct features that influence their market value.
 
-```{r fig-pred1, fig.width=7, fig.height=2.9, fig.cap='Distributions of Property Type and Number of Bedrooms'}
+**Number of Bedrooms (`beds`):** This numeric variable represents the count of full bedrooms in a property, as measured by appraisers. It is a key factor in the analysis, as more bedrooms often correlate with greater living space and the potential to accommodate larger households.
+
+**Property Size (`sqft`):** Measured in square feet, this variable reflects the total size of the property and is determined by appraisers. As the United States predominantly uses the imperial system, square footage is a standard unit. Larger properties generally hold more value, making this a significant predictor in property valuation.
+
+**Property Age (`property_age`):** This derived variable calculates the age of a property in years, based on the difference between the year of data collection and the `year_built`. Age is a vital consideration in determining price, as newer properties are often smaller due to rising construction costs and increasingly strict zoning regulations.
+
+@fig-pred1 represents the distributions of property types and number of bedrooms. Plot C shows that single-family homes are the most common, followed closely by condos, with townhouses being the least prevalent. This likely reflects the mix of apartments and houses present in Seattle's real estate market. Plot D highlights that properties with 2 or 3 bedrooms are most frequent, while some properties even have north of 7 bedrooms. This is likely because condos typically feature 1-2 bedrooms, whereas single-family homes and townhouses commonly have 3-4 bedrooms.
+
+```{r fig-pred1, fig.width=7, fig.height=2.6, fig.cap='Distributions of Property Type and Number of Bedrooms'}
 p3 <- data |> 
   ggplot(aes(x = property_type)) +
   geom_bar(fill = "beige", color = "black") +
@@ -110,9 +118,9 @@ p4 <- data |>
 ggarrange(p3, p4, labels = c("C", "D"))
 ```
 
-@fig-pred2 ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod nisl sollicitudin blandit fermentum. Pellentesque molestie mi augue, a consectetur tellus commodo a. Sed dui lectus, sollicitudin ut sagittis eget, venenatis eget est. Proin neque massa, interdum et laoreet vulputate, cursus vitae mi. Ut scelerisque, dui vitae consequat fringilla, nunc felis pharetra dui, ac condimentum nibh ipsum non tortor. Vivamus dictum volutpat nisl. Quisque ullamcorper erat mi, ac tempus leo efficitur non. Nulla porta id est id tempus. Quisque pulvinar, dolor eget elementum tincidunt, est neque bibendum purus, quis sodales ipsum eros ac turpis.
+@fig-pred2 displays the distributions of property size and age. Plot E shows that property size is positively skewed, with most properties under 2,500 square feet and a peak between 700 and 1,200 square feet. Properties exceeding 5,000 square feet likely represent luxury homes or mansions. Plot F indicates that property age is also positively skewed, with the most common properties being less than 10 years old. The second most common group is 20-30 years old, likely reflecting construction surges before the 2008 financial crisis and real estate market downturn.
 
-```{r fig-pred2, fig.width=7, fig.height=2.8, fig.cap='Distributions of Property Size and Property Age'}
+```{r fig-pred2, fig.width=7, fig.height=2.6, fig.cap='Distributions of Property Size and Property Age'}
 p5 <- data |>
   ggplot(aes(x = sqft)) + 
   geom_histogram(binwidth = 500, fill = "beige", color = "black") +
