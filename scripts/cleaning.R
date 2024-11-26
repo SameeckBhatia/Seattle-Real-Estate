@@ -33,17 +33,19 @@ cleaned_data <- raw_data |>
          baths, location, square_feet, year_built, days_on_market, hoa_month,
          price, latitude, longitude) |>
   filter(sale_type != "New Construction Plan",
-         !is.na(square_feet),
+         !is.na(square_feet), !is.na(year_built),
          year_built <= 2024) |>
   rename(mls_id = mls_number,
          zip_code = zip_or_postal_code,
          neighbourhood = location,
          sqft = square_feet) |>
-  mutate(half_bath = ifelse(baths - floor(baths) > 0, 1, 0),
+  mutate(hoa_month = replace_na(hoa_month, 0),
+         half_bath = ifelse(is.numeric(baths) & (baths - floor(baths) > 0), 1, 0),
          baths = floor(baths),
          property_age = 2024 - year_built,
          price_sqft = round(price / sqft, 2),
-         property_type = recode(property_type, "Single Family Residential" = "Single Family"))
+         property_type = case_when(property_type == "Single Family Residential" ~ "Single Family",
+                                   .default = property_type))
 
 colSums(is.na(cleaned_data))
 
