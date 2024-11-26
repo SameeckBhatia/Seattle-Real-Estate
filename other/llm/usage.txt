@@ -107,3 +107,106 @@ Ensure the ZIP file contains the required files for Shapefiles (.shp, .shx, .dbf
 If working with large files, set quiet = FALSE in st_read() to monitor progress.
 For GeoJSON, no additional files are needed beyond the .geojson.
 Let me know if you'd like a full example with real-world data!
+
+--- User ---
+What is wrong with this chunk, and is there an alternative i can take:
+cleaned_data <- raw_data |>
+  clean_names() |>
+  select(sale_type, mls_number, property_type, city, zip_or_postal_code, beds, 
+         baths, location, square_feet, year_built, days_on_market, hoa_month,
+         price, latitude, longitude) |>
+  filter(sale_type != "New Construction Plan",
+         !is.na(square_feet),
+         year_built <= 2024) |>
+  rename(mls_id = mls_number,
+         zip_code = zip_or_postal_code,
+         neighbourhood = location,
+         sqft = square_feet) |>
+  mutate(hoa_month = replace_na(hoa_month, 0),
+         half_bath = ifelse(baths - floor(baths) > 0, 1, 0),
+         baths = floor(baths),
+         property_age = 2024 - year_built,
+         price_sqft = round(price / sqft, 2),
+         property_type = recode(property_type, "Single Family Residential" = "Single Family"))
+
+--- ChatGPT ---
+The provided R code chunk is performing data cleaning and transformation using a pipeline (|> operator) common in tidyverse workflows. Below are some issues or considerations, and potential alternatives:
+
+Issues in the Code
+Hardcoding the year 2024:
+
+Using a hardcoded year (year_built <= 2024 and 2024 - year_built) limits the code's reusability in future years. It's better to calculate the current year dynamically.
+Assumption in half_bath logic:
+
+The logic baths - floor(baths) > 0 assumes that fractional bath numbers always indicate a half bath. This may not align with real-world data (e.g., "1.75 baths").
+price_sqft calculation:
+
+Division by zero or missing values in sqft could lead to errors or warnings, even though you've filtered out NA values earlier.
+mutate overwriting baths:
+
+Modifying the baths column directly after deriving half_bath might confuse downstream analysis. Consider retaining the original column or clarifying its intent.
+Recode of property_type:
+
+The recode function assumes no other unexpected values are present in property_type, which may cause warnings or errors if additional property types exist.
+location renamed to neighbourhood:
+
+If the location column contains broader information (e.g., coordinates, not just neighborhood names), the renaming might misrepresent the data.
+Suggested Alternatives and Improvements
+Here’s a more robust and dynamic version of the code:
+
+r
+Copy code
+library(dplyr)
+library(tidyr)
+library(stringr)
+
+current_year <- as.numeric(format(Sys.Date(), "%Y"))
+
+cleaned_data <- raw_data %>%
+  clean_names() %>%
+  select(
+    sale_type, mls_number, property_type, city, zip_or_postal_code, beds, 
+    baths, location, square_feet, year_built, days_on_market, hoa_month,
+    price, latitude, longitude
+  ) %>%
+  filter(
+    sale_type != "New Construction Plan",
+    !is.na(square_feet),
+    year_built <= current_year
+  ) %>%
+  rename(
+    mls_id = mls_number,
+    zip_code = zip_or_postal_code,
+    neighbourhood = location,
+    sqft = square_feet
+  ) %>%
+  mutate(
+    hoa_month = replace_na(hoa_month, 0),
+    half_bath = if_else((baths %% 1) > 0, 1, 0),  # More robust logic
+    baths_full = floor(baths),  # Avoid overwriting original baths
+    property_age = current_year - year_built,
+    price_sqft = if_else(sqft > 0, round(price / sqft, 2), NA_real_), # Handle zero sqft
+    property_type = recode(
+      property_type,
+      "Single Family Residential" = "Single Family",
+      .default = "Other" # Default for unexpected values
+    )
+  )
+Key Changes Explained
+Dynamic current_year:
+
+Replaced 2024 with current_year calculated using Sys.Date().
+Improved half_bath logic:
+
+Used (baths %% 1) to check for fractional parts, ensuring robustness.
+Retained original baths as baths_full for clarity.
+Guarded price_sqft:
+
+Used if_else to ensure price_sqft isn’t calculated when sqft is zero or missing.
+Default in recode:
+
+Added .default to handle unexpected property_type values.
+Column renaming clarified:
+
+Kept baths and baths_full separate to avoid confusion in transformations.
+By implementing these changes, your code will be more robust, future-proof, and adaptable for varied datasets.
