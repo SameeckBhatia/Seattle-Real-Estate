@@ -23,5 +23,5 @@ Parts of this project, including code for unit testing, data cleaning, and data 
 To replicate the analysis and run the scripts, install the following R packages by running:
 
 ```{r}
-install.packages(c("tidyverse", "arrow", "janitor", "testthat", "rsample", "MLmetrics")
+install.packages(c("tidyverse", "arrow", "janitor", "testthat", "rsample", "MLmetrics", "modelsummary", "stargazer")
 ```
