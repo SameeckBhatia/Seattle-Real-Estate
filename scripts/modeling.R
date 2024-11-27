@@ -22,7 +22,7 @@ cleaned_data <- read_parquet("data/cleaned_data/cleaned_data.parquet")
 
 # Preparing data for the model
 model_data <- cleaned_data |>
-  select(property_type, zip_code, beds, baths, half_bath, sqft, days_on_market,
+  select(property_type, beds, baths, half_bath, sqft, days_on_market,
          hoa_month, property_age, price)
 
 # Setting seed for reproducibility
@@ -49,7 +49,6 @@ anova(model1, model2)
 
 plot(fitted(model2), resid(model2))
 qqnorm(resid(model2));qqline(resid(model2))
-powerTransform(model2)
 
 # Fitting model 3
 model3 <- lm(data = training_data, formula = price ~ beds + sqft + hoa_month + sqft:beds)
@@ -75,5 +74,5 @@ R2_Score(testing_data$pred3, testing_data$price)
 
 # Exporting models
 saveRDS(model1, "models/full_model.rds")
-saveRDS(model2, "models/partial_model.rds")
+saveRDS(model2, "models/reduced_model.rds")
 saveRDS(model3, "models/final_model.rds")
