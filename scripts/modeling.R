@@ -29,7 +29,7 @@ model_data <- cleaned_data |>
 # Setting seed for reproducibility
 set.seed(12)
 
-split <- initial_split(model_data, prop = 0.7, strata = property_type)
+split <- initial_split(model_data, prop = 0.7)
 
 training_data <- training(split)
 testing_data <- testing(split)
@@ -51,17 +51,30 @@ anova(model1, model2)
 plot(fitted(model2), resid(model2))
 qqnorm(resid(model2));qqline(resid(model2))
 
+# Fitting model 3
+model3 <- lm(data = training_data, 
+             formula = price ~ beds + sqft + hoa_month + sqft:beds)
+
+summary(model3)
+
+plot(fitted(model3), resid(model3))
+qqnorm(resid(model3));qqline(resid(model3))
+
 # Evaluating models
 testing_data  <- testing_data |>
   mutate(pred1 = predict(model1, testing_data),
-         pred2 = predict(model2, testing_data))
+         pred2 = predict(model2, testing_data),
+         pred3 = predict(model3, testing_data))
 
 RMSE(testing_data$pred1, testing_data$price)
 RMSE(testing_data$pred2, testing_data$price)
+RMSE(testing_data$pred3, testing_data$price)
 
 R2_Score(testing_data$pred1, testing_data$price)
 R2_Score(testing_data$pred2, testing_data$price)
+R2_Score(testing_data$pred3, testing_data$price)
 
 # Exporting models
 saveRDS(model1, "models/full_model.rds")
 saveRDS(model2, "models/reduced_model.rds")
+saveRDS(model3, "models/final_model.rds")
