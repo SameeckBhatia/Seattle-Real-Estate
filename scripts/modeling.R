@@ -5,10 +5,7 @@
 # Contact: sameeck.bhatia@mail.utoronto.ca
 # License: MIT
 # Pre-requisites:
-#   - `tidyverse` package must be installed.
-#   - `arrow` package must be installed.
-#   - `rsample` package must be installed.
-#   - `MLmetrics` package must be installed.
+#   - `package_installation.R` must be run.
 # Any other information needed? None
 
 # Loading required libraries

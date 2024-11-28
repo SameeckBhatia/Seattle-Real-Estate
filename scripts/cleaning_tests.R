@@ -5,8 +5,7 @@
 # Contact: sameeck.bhatia@mail.utoronto.ca
 # License: MIT
 # Pre-requisites:
-#   - `tidyverse` package must be installed.
-#   - `testthat` package must be installed.
+#   - `package_installation.R` must be run.
 # Any other information needed? None
 
 # Loading required libraries

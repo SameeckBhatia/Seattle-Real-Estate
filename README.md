@@ -20,8 +20,4 @@ Parts of this project, including code for unit testing, data cleaning, and data 
 
 ## Installation Instructions
 
-To replicate the analysis and run the scripts, install the following R packages by running:
-
-```{r}
-install.packages(c("tidyverse", "arrow", "janitor", "testthat", "rsample", "MLmetrics", "modelsummary", "stargazer")
-```
+To replicate the analysis using all required libraries, run the R script located in `scripts` titled `package_installation.R`.
