@@ -54,9 +54,7 @@ The dataset includes only properties within Seattle’s official city boundaries
 
 ## Summary Statistics
 
-```{r}
-#| output: asis
-
+```{r, output='asis'}
 data <- read_parquet("../data/cleaned_data/cleaned_data.parquet") |>
   as.data.frame()
 
@@ -198,6 +196,7 @@ final_model <- readRDS("../models/final_model.rds")
 ```{r #tbl-summ}
 modelsummary(list(
   "Final Model" = final_model), output = "kableExtra",
+  fmt = "%.2f",
   gof_omit = "BIC|AIC") |>
   column_spec(2, width = "2.5in")
 ```
@@ -237,15 +236,17 @@ set.seed(12)
 split <- initial_split(data, prop = 0.7)
 
 testing_data <- testing(split)
-```
 
+testing_data <- testing_data |>
+  mutate(predicted_price = predict(final_model, newdata = testing_data),
+         predicted_price_sqft = predicted_price / sqft) |>
+  drop_na()
+```
 
 ## Result 1
 
 ```{r fig-scatter, fig.cap='Large Uncertainty in the Values of Luxury Homes and Mansions'}
 testing_data |>
-  mutate(predicted_price = predict(final_model, newdata = testing_data)) |>
-  drop_na() |>
   ggplot(aes(x = predicted_price / 10^6, y = price / 10^6)) +
   geom_point(color = "#519C7C", size = 1) +
   geom_function(fun = function(x){x}, linetype = "dashed") +
@@ -260,10 +261,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan el
 
 ## Result 2
 
-```{r fig-col, fig.cap='Highest Average Predicted Listing Price in 85 Acre Gated Community'}
+```{r fig-col, fig.cap="Highest Average Predicted Listing Price in Seattle's 85 Acre Gated Community"}
 testing_data |>
-  mutate(predicted_price = predict(final_model, newdata = testing_data)) |>
-  drop_na() |>
   select(neighbourhood, predicted_price) |>
   group_by(neighbourhood) |>
   summarise(mean = mean(predicted_price / 10^6)) |>
@@ -282,15 +281,23 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan el
 
 ## Result 3
 
-```{r fig-box, fig.cap='Single Family Homes Valued Significantly Higher Than Other Property Types'}
+```{r fig-box, fig.cap='40 Year Old Homes Among the Lowest in Actual and Predicted Values'}
 testing_data |>
-  mutate(predicted_price = predict(final_model, newdata = testing_data)) |>
-  drop_na() |>
-  ggplot(aes(x = as.character(property_type), y = predicted_price / 10^6)) +
-  geom_boxplot(fill = "#519C7C", width = 0.25) +
-  coord_flip() +
-  scale_y_continuous(breaks = seq(0, 8, 1)) +
-  labs(x = "Property Type", y = "Price ($ millions)")
+  group_by(property_age) |>
+  summarise(mean_price = mean(price) / 10^6,
+            mean_predicted = mean(predicted_price) / 10^6) |>
+  pivot_longer(names_to = "price_type", cols = c(mean_price, mean_predicted),
+               values_to = "value") |>
+  mutate(price_type = recode(price_type, 
+                             "mean_price" = "Actual", 
+                             "mean_predicted" = "Predicted")) |>
+  ggplot(aes(x = property_age, y = value, color = price_type)) +
+  geom_point(size = 0.75) +
+  scale_color_manual(values = c("black", "#519C7C")) +
+  geom_smooth(method = "lm", formula = y ~ I(x^2) + x, se = FALSE) +
+  facet_wrap(vars(price_type)) +
+  theme(legend.position = "top") +
+  labs(x = "Property Age", y = "Average Price ($ millions)", color = "Price Type")
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
