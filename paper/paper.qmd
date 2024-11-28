@@ -32,6 +32,7 @@ library(ggpubr)
 library(modelsummary)
 library(dagitty)
 library(ggdag)
+library(sf)
 ```
 
 # Introduction
@@ -135,8 +136,6 @@ p6 <- data |>
 ggarrange(p5, p6, labels = c("E", "F"))
 ```
 
-\newpage
-
 # Model {#sec-model}
 
 ## Overview
@@ -148,7 +147,7 @@ The model uses a multiple linear regression approach to estimate property values
 The linear regression model can be represented as:
 
 $$
-\text{price} = \beta_0 + \beta_1 \cdot \text{beds} + \beta_2 \cdot \text{sqft} + \beta_3 \cdot \text{hoa\_month} + \beta_4 \cdot (\text{sqft} \cdot \text{beds})
+\text{price} = \beta_0 + \beta_1 \cdot \text{beds} + \beta_2 \cdot \text{baths} + \beta_3 \cdot \text{sqft} + \beta_4 \cdot \text{hoa\_month} + \beta_5 \cdot (\text{sqft} \cdot \text{beds})
 $$
 
 , where the coefficients are described as:
@@ -159,19 +158,23 @@ The predicted value of `price` when all predictors ($\text{beds}$, $\text{sqft}$
 
 **$\beta_1$: Coefficient for `beds`**  
 
-The effect of adding one more bedroom ($\text{beds}$) on `price`, holding other factors constant (except for the interaction term).
+The effect of adding one more bedroom on price, holding other factors constant (except for the interaction term).
 
-**$\beta_2$: Coefficient for `sqft`**  
+**$\beta_2$: Coefficient for `baths`**
 
-The effect of increasing square footage ($\text{sqft}$) by one unit on `price`, holding other factors constant (except for the interaction term).
+The effect of adding one more bathroom on price, holding other factors constant.
 
-**$\beta_3$: Coefficient for `hoa_month`**  
+**$\beta_3$: Coefficient for `sqft`**  
 
-The effect of a one-unit increase in monthly homeowner's association fees (`hoa_month`) on `price`, holding other factors constant.
+The effect of increasing square footage by one unit on price, holding other factors constant (except for the interaction term).
 
-**$\beta_4$: Interaction between `sqft` and `beds`**  
+**$\beta_4$: Coefficient for `hoa_month`**  
 
-Represents how the relationship between $\text{sqft}$ and `price` changes depending on the number of bedrooms ($\text{beds}$).
+The effect of a one-unit increase in monthly homeowner's association fees on price, holding other factors constant.
+
+**$\beta_5$: Interaction between `sqft` and `beds`**  
+
+Represents how the relationship between $\text{sqft}$ and `price` changes depending on the number of bedrooms.
 
 ## Limitations
 
@@ -181,27 +184,9 @@ This model has a few limitations that should be considered when interpreting its
 
 The four features included in the model are `beds`, `sqft`, `hoa_month`, and `sqft:beds`, as they were the most significant in influencing the model's property valuations. The beds feature was selected because the number of bedrooms is a key determinant of a property's utility and appeal to buyers, directly impacting its market value. The sqft feature, representing the total square footage, is a fundamental metric for assessing a property's size and, consequently, its worth. The hoa_month feature accounts for monthly homeowner association fees, which can significantly affect the affordability and desirability of properties, particularly in condominiums or communities with shared amenities. Finally, the interaction term sqft:beds captures the relationship between the size of the property and the number of bedrooms, highlighting how the distribution of space impacts valuation.
 
-## Interpretation
-
-@tbl-summ shows the values of the model's coefficients mentioned in the setup. The intercept of -341,047.42 suggests that, without any additional predictors, property prices would begin at this negative baseline, though this value has limited standalone interpretation. The coefficient for beds is -159,574.45, meaning that, holding other factors constant, each additional bedroom is associated with a significant reduction in price. However, this effect is modified by the interaction term beds $\times$ sqft, which has a negative coefficient of -32.64, indicating that larger properties with more bedrooms have diminishing price returns. The sqft variable has a strong positive impact (1152.06 per additional square foot), highlighting size as a key driver of value. The hoa_month coefficient (267.83) shows a modest positive association with price, possibly reflecting higher costs in premium communities. With an adjusted $R^2$ of 0.6543, the model explains 65.3\% of the variance in property prices, and an RMSE of 719,452.71, the summary suggests a decent fit.
-
 @fig-dag represents the causal relationships between the variables analyzed in the regression model. It illustrates that property price is influenced by the number of bedrooms, bathrooms, square footage, and HOA fees. Square footage itself depends on the number of bedrooms and bathrooms, while HOA fees are linked to square footage. The directed arrows capture the assumed causal pathways, emphasizing that the effects of bedrooms and bathrooms on price are partly mediated through square footage.
 
-```{r}
-full_model <- readRDS("../models/full_model.rds")
-reduced_model <- readRDS("../models/reduced_model.rds")
-final_model <- readRDS("../models/final_model.rds")
-```
-
-```{r #tbl-summ}
-modelsummary(list(
-  "Final Model" = final_model), output = "kableExtra",
-  fmt = "%.2f",
-  gof_omit = "BIC|AIC") |>
-  column_spec(2, width = "2.5in")
-```
-
-```{r fig-dag, fig.align='center', fig.width=4, fig.height=3, fig.cap='Multiple Causal Relationships Among Model Variables'}
+```{r fig-dag, fig.width=4, fig.height=2.8, fig.cap='Multiple Causal Relationships Among Model Variables'}
 dagify(
   price ~ beds,
   price ~ sqft,
@@ -212,21 +197,38 @@ dagify(
   baths ~ beds,
   hoa ~ sqft,
   coords = list(
-    x = c(beds = 0.5, sqft = 1, baths = 0, price = 2, hoa = 1.5),
-    y = c(beds = 0, sqft = 1, baths = 1, price = 0, hoa = 1.5)
+    x = c(beds = 0.5, sqft = 0.9, baths = 0, price = 2, hoa = 1.6),
+    y = c(beds = 0, sqft = 0.9, baths = 1, price = 0, hoa = 1.2)
   )
 ) |>
   ggdag() +
   theme_void()
 ```
 
+## Interpretation
+
+@tbl-summ shows the values of the model's coefficients mentioned in the setup. The intercept of −66,054.23 suggests that, without any additional predictors, property prices would begin at this value, though it has limited standalone interpretation. The coefficient for `beds` is 55,091.77, meaning that, holding other factors constant, each additional bedroom is associated with an addition in price. However, this effect is modified by the interaction term `beds` $\times$ `sqft`, which has a negative coefficient of −38.66, indicating that larger properties have diminishing prices. The coefficient for `baths` is 41,740.69, meaning that for each additional bathroom, the predicted value of the price increases by around \$41,740.69, holding all other variables constant. This suggests that bathrooms have a strong positive impact on the value of the property. The `sqft` variable has a strong positive impact (592.23 per additional square foot), highlighting size as a key driver of value. The `hoa_month` coefficient (66.39) shows a modest positive association with price, possibly reflecting higher costs in premium communities. With an adjusted $R^2$ of 0.716 and an RMSE of 331,563.51, the model has a decent fit.
+
+```{r}
+full_model <- readRDS("../models/full_model.rds")
+reduced_model <- readRDS("../models/reduced_model.rds")
+final_model <- readRDS("../models/final_model.rds")
+```
+
+```{r #tbl-summ}
+modelsummary(list(
+  "Final Model" = final_model), output = "kableExtra",
+  fmt = "%.2f", gof_map = c("nobs", "r.squared", "adj.r.squared", "rmse")) |>
+  column_spec(2, width = "2.5in")
+```
+
 ## Validation
 
-The linear model was created using base R [@R] to fit the data and generate predictions, while the MLMetrics package [@mlmetrics] was used to evaluate performance. A train-test split of 70:30 was created with the rsample package [@rsample], with the model trained on the larger portion of the data and validated using out-of-sample testing on the remaining data. Key evaluation metrics included the Root Mean Square Error (RMSE) and the $R^2$ score. The model achieved an RMSE of 1,850,720, indicating the average prediction error in dollar terms, and an $R^2$ score of approximately 0.281, reflecting the proportion of variance in property prices explained by the model. Detailed diagnostics and further information are provided in Appendix B.
+The linear model was created using R [@R] to fit the data and generate predictions, while the MLMetrics package [@mlmetrics] was used to evaluate performance. A train-test split was created with the rsample package [@rsample], with the model trained on the 70\% of the data and validated using out-of-sample testing on the remaining 30\%. Key evaluation metrics included the Root Mean Square Error (RMSE) and $R^2$ The model achieved an RMSE of 331,564, indicating the average prediction error in dollar terms, and $R^2$ of approximately 0.716, reflecting the proportion of variance in property prices explained by the model. Further diagnostics and information are provided in Appendix B.
 
 ## Alternate Models
 
-Several alternative models were considered before selecting the final one. The first, a “full model,” included all variables in the cleaned dataset, achieving an RMSE of 1,864,966 and an $R^2$ score of 0.269. While this model used all available information, many variables were statistically insignificant. A reduced model was then tested by retaining only significant variables, resulting in an RMSE of 1,865,188 and an $R^2$ score of 0.269. Though concise, it performed similarly to the full model. The final model, incorporating an interaction term, outperformed both alternatives with an RMSE of 1,850,720 and an $R^2$ score of 0.281.
+Several alternative models were considered before selecting the final one. The first, a “full model,” included all variables in the cleaned dataset, achieving an RMSE of 1,864,966 and an $R^2$ score of 0.269. While this model used all available information, many variables were statistically insignificant. A reduced model was then tested by retaining only significant variables, resulting in an RMSE of 1,865,188 and an $R^2$ score of 0.269. Though concise, it performed similarly to the full model. The final model, incorporating an interaction term, outperformed both alternatives with an RMSE of 1,850,720 and an $R^2$ of 0.281.
 
 # Results {#sec-results}
 
@@ -245,14 +247,17 @@ testing_data <- testing_data |>
 
 ## Result 1
 
-```{r fig-scatter, fig.cap='Large Uncertainty in the Values of Luxury Homes and Mansions'}
+```{r fig-scatter, fig.cap='Large Uncertainty in the Predicted Values of Luxury Homes'}
 testing_data |>
   ggplot(aes(x = predicted_price / 10^6, y = price / 10^6)) +
-  geom_point(color = "#519C7C", size = 1) +
-  geom_function(fun = function(x){x}, linetype = "dashed") +
-  scale_x_continuous(breaks = seq(0, 20, 2)) +
+  geom_point(color = "#519C7C", size = 1, shape = 15) +
+  geom_abline(linetype = "dashed") +
+  scale_x_continuous(breaks = seq(0, 20, 1)) +
   scale_y_continuous(breaks = seq(0, 20, 2)) +
-  labs(x = "Predicted Price ($ millions)", y = "Actual Price ($ millions)")
+  labs(
+    x = "Predicted Price ($ millions)",
+    y = "Actual Price ($ millions)"
+  )
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
@@ -261,18 +266,32 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan el
 
 ## Result 2
 
-```{r fig-col, fig.cap="Highest Average Predicted Listing Price in Seattle's 85 Acre Gated Community"}
+```{r fig-box, fig.cap="Single Family Homes Valued the Highest Among All Property Types"}
 testing_data |>
-  select(neighbourhood, predicted_price) |>
-  group_by(neighbourhood) |>
-  summarise(mean = mean(predicted_price / 10^6)) |>
-  arrange(desc(mean)) |>
-  head(n = 5) |>
-  ggplot(aes(x = reorder(neighbourhood, mean), y = mean)) +
-  geom_col(position = "dodge", fill = "#519C7C", color = "black") +
-  scale_y_continuous(breaks = seq(0, 5, 0.5)) +
+  pivot_longer(
+    cols = c(price, predicted_price), 
+    names_to = "price_type", 
+    values_to = "value"
+  ) |>
+  mutate(price_type = recode(price_type, "price" = "Actual", 
+                             "predicted_price" = "Predicted")) |>
+  ggplot(aes(x = property_type, y = value / 10^6, fill = price_type)) +
+  geom_boxplot(
+    position = position_dodge(0.6), 
+    color = "black", 
+    width = 0.5,
+    outlier.shape = 15, 
+    outlier.size = 0.5
+  ) +
+  scale_y_continuous(limits = c(0, 7)) +
   coord_flip() +
-  labs(x = "Neighbourhood", y = "Mean Predicted Price ($ millions)")
+  scale_fill_manual(values = c("grey70", "#519C7C")) +
+  theme(legend.position = "top") +
+  labs(
+    x = "Property Type", 
+    y = "Price ($ millions)", 
+    fill = "Price Type"
+  )
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
@@ -281,23 +300,79 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan el
 
 ## Result 3
 
-```{r fig-box, fig.cap='40 Year Old Homes Among the Lowest in Actual and Predicted Values'}
+```{r fig-age, fig.cap='40 Year Old Homes Among the Lowest in Actual and Predicted Values'}
 testing_data |>
   group_by(property_age) |>
-  summarise(mean_price = mean(price) / 10^6,
-            mean_predicted = mean(predicted_price) / 10^6) |>
-  pivot_longer(names_to = "price_type", cols = c(mean_price, mean_predicted),
-               values_to = "value") |>
+  summarise(
+    mean_price = mean(price) / 10^6,
+    mean_predicted = mean(predicted_price) / 10^6
+  ) |>
+  pivot_longer(
+    names_to = "price_type", 
+    cols = c(mean_price, mean_predicted),
+    values_to = "value"
+  ) |>
   mutate(price_type = recode(price_type, 
                              "mean_price" = "Actual", 
                              "mean_predicted" = "Predicted")) |>
   ggplot(aes(x = property_age, y = value, color = price_type)) +
-  geom_point(size = 0.75) +
+  geom_point(size = 0.75, shape = 15) +
   scale_color_manual(values = c("black", "#519C7C")) +
   geom_smooth(method = "lm", formula = y ~ I(x^2) + x, se = FALSE) +
   facet_wrap(vars(price_type)) +
-  theme(legend.position = "top") +
-  labs(x = "Property Age", y = "Average Price ($ millions)", color = "Price Type")
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Property Age",
+    y = "Average Price ($ millions)",
+    color = "Price Type"
+  )
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+
+\newpage
+
+## Result 4
+
+```{r fig-map, fig.cap="Highest Average Predicted Listing Price in Seattle's 85 Acre Gated Community"}
+zip_codes <- st_read("../data/spatial_data/zip-codes.geojson", quiet = TRUE) |>
+  rename(zip_code = ZCTA5CE10) |> 
+  select(zip_code, geometry)
+
+testing_data |>
+  group_by(zip_code) |>
+  summarise(
+    mean_price = mean(price) / 10^6,
+    mean_predicted = mean(predicted_price) / 10^6,
+    .groups = "drop"
+  ) |>
+  pivot_longer(
+    names_to = "price_type", 
+    cols = c(mean_price, mean_predicted),
+    values_to = "value"
+  ) |>
+  mutate(price_type = recode(price_type, 
+                             "mean_price" = "Actual", 
+                             "mean_predicted" = "Predicted")) |>
+  merge(zip_codes, by = "zip_code") |>
+  st_sf() |>  # Convert to sf object
+  ggplot() +
+  geom_sf(aes(fill = value)) +
+  coord_sf(
+    xlim = c(-122.5369, -122.1166), 
+    ylim = c(47.44308, 47.79792),
+    expand = FALSE
+  ) +
+  scale_fill_distiller(palette = "Greens", direction = 1) +
+  facet_wrap(vars(price_type)) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank()
+  ) +
+  labs(fill = "Price \n($ millions)")
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
