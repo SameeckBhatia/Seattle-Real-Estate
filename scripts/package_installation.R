@@ -8,10 +8,12 @@
 # Any other information needed? None
 
 # Installing packages
-install.packages("tidyverse")
+install.packages("daggity")
+install.packages("ggdag")
 install.packages("janitor")
-install.packages("testthat")
-install.packages("rsample")
 install.packages("MLmetrics")
 install.packages("modelsummary")
+install.packages("rsample")
 install.packages("stargazer")
+install.packages("testthat")
+install.packages("tidyverse")
