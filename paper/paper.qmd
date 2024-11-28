@@ -30,20 +30,19 @@ library(arrow)
 library(stargazer)
 library(ggpubr)
 library(modelsummary)
+library(dagitty)
+library(ggdag)
 ```
 
 # Introduction
 
 Seattle’s real estate market has experienced significant fluctuations since the start of the millennium. Despite these booms and busts, property prices in Seattle remain among the highest in the United States. Demand has steadily increased, and even during periods of lower demand, the market continues to attract buyers. At current price levels, more potential homebuyers are seeking reliable information to find the best deals. With advancements in technology and the increasing availability of data, tools for assessing property values have become essential. One critical tool is an estimate of a property’s fair value, which can help buyers determine whether they are overpaying or underpaying relative to the market.
 
-This paper focuses on developing an accurate and accessible property valuation model tailored to Seattle’s housing market. The model incorporates current market data to provide fair value estimates for individual properties. The goal is to inform readers about the key factors driving real estate prices in Seattle while empowering them with a tool to make better home-buying decisions. By applying machine learning and statistical techniques, the model aims to ensure accuracy and reflect the intrinsic value of properties rather than merely their market prices.
+This paper focuses on developing an accurate and accessible property valuation model tailored to Seattle’s housing market. The model incorporates current market data to provide fair value estimates for individual properties. The goal is to inform readers about the key factors driving real estate prices in Seattle while empowering them with a tool to make better home-buying decisions. By applying machine learning and statistical techniques, the model aims to ensure accuracy and reflect the intrinsic value of properties rather than merely their market prices. Existing valuation tools, such as Zillow’s “Zestimate” and Redfin’s proprietary estimates, have limitations. These models are often closed-source, leaving potential users unable to access the methodology or even the results without cost. This creates a significant gap in the availability of open, free, and transparent valuation tools. The absence of such tools denies buyers the advantage of comprehensive, unbiased information to assess property values independently. To address this gap, data was collected from Redfin’s semi-public dataset on current Seattle property listings. The analysis was conducted using the R programming language for data cleaning, testing, model creation, and result interpretation.
 
-Existing valuation tools, such as Zillow’s “Zestimate” and Redfin’s proprietary estimates, have limitations. These models are often closed-source, leaving potential users unable to access the methodology or even the results without cost. This creates a significant gap in the availability of open, free, and transparent valuation tools. The absence of such tools denies buyers the advantage of comprehensive, unbiased information to assess property values independently. To address this gap, data was collected from Redfin’s semi-public dataset on current Seattle property listings. The analysis was conducted using the R programming language for data cleaning, testing, model creation, and result interpretation.
+**TO-DO: ** Estimand. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rhoncus scelerisque felis, vitae feugiat est mattis non. Morbi blandit felis non porttitor fermentum. Integer arcu metus, fringilla in mattis elementum, ornare et arcu. Integer ut tellus id tortor pulvinar posuere. In molestie quam eu mi efficitur ornare. Fusce et egestas felis, ac rhoncus nisl. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
-**TO-DO: ** Preliminary findings, significance, estimand
-
-
-The paper is structured as follows: @sec-data introduces the dataset and variables. @sec-model outlines the model design and its significance. @sec-results presents the model’s predictions and actionable insights for buyers. Finally, @sec-discuss explores potential applications of the model in other cities, factors influencing property prices, and the generalizability of the model.
+**TO-DO: ** Preliminary findings, significance. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rhoncus scelerisque felis, vitae feugiat est mattis non. Morbi blandit felis non porttitor fermentum. Integer arcu metus, fringilla in mattis elementum, ornare et arcu. Integer ut tellus id tortor pulvinar posuere. In molestie quam eu mi efficitur ornare. Fusce et egestas felis, ac rhoncus nisl. The paper is structured as follows: @sec-data introduces the dataset and variables. @sec-model outlines the model design and its significance. @sec-results presents the model’s predictions and actionable insights for buyers. Finally, @sec-discuss explores potential applications of the model in other cities, factors influencing property prices, and the generalizability of the model.
 
 # Data {#sec-data}
 
@@ -51,7 +50,7 @@ The paper is structured as follows: @sec-data introduces the dataset and variabl
 
 The data used in this paper comes from Redfin, a real estate brokerage and mortgage company, and represents current property prices across Seattle. While the data was collected from @redfin, similar data could have been sourced from competitors like Zillow and Realtor.com, with Zillow being the largest of the three. If data from Zillow or Realtor.com had been used, the listings might vary slightly since each platform likely features different sellers and listings. However, Redfin was chosen as the source because it is the only brokerage firm that allows public downloads of its listings, helping to avoid violations of data extraction policies.
 
-The dataset includes only properties within Seattle’s official city boundaries and covers condos, townhouses, and single-family homes currently on the market. The raw data contains 27 variables, 18 of which have been included in the cleaned dataset. These include variables such as MLS number, number of bedrooms, neighborhood, and geographic coordinates. Additionally, some variables were constructed specifically for this analysis, such as `half_bath`, `property_age`, and `price_sqft`. The first two were added to enhance the dataset and valuation model, while `price_sqft` was created as an alternate response variable. Further details about these variables can be found in Appendix A. The data was analyzed using `R` [@R] and the `tidyverse` [@tidyverse] package, while visualizations have been created using `tidyverse`.
+The dataset includes only properties within Seattle’s official city boundaries and covers condos, townhouses, and single-family homes currently on the market. The raw data contains 27 variables, 18 of which have been included in the cleaned dataset. These include variables such as MLS number, number of bedrooms, neighborhood, and geographic coordinates. Additionally, some variables were constructed specifically for this analysis, such as `half_bath`, `property_age`, and `price_sqft`. The first two were added to enhance the dataset and valuation model, while `price_sqft` was created as an alternate response variable. Further details about these variables can be found in Appendix A. The data was analyzed using R [@R] and the tidyverse [@tidyverse] package, while visualizations have been created using tidyverse.
 
 ## Summary Statistics
 
@@ -184,6 +183,12 @@ This model has a few limitations that should be considered when interpreting its
 
 The four features included in the model are `beds`, `sqft`, `hoa_month`, and `sqft:beds`, as they were the most significant in influencing the model's property valuations. The beds feature was selected because the number of bedrooms is a key determinant of a property's utility and appeal to buyers, directly impacting its market value. The sqft feature, representing the total square footage, is a fundamental metric for assessing a property's size and, consequently, its worth. The hoa_month feature accounts for monthly homeowner association fees, which can significantly affect the affordability and desirability of properties, particularly in condominiums or communities with shared amenities. Finally, the interaction term sqft:beds captures the relationship between the size of the property and the number of bedrooms, highlighting how the distribution of space impacts valuation.
 
+## Interpretation
+
+@tbl-summ shows the values of the model's coefficients mentioned in the setup. The intercept of -341,047.42 suggests that, without any additional predictors, property prices would begin at this negative baseline, though this value has limited standalone interpretation. The coefficient for beds is -159,574.45, meaning that, holding other factors constant, each additional bedroom is associated with a significant reduction in price. However, this effect is modified by the interaction term beds $\times$ sqft, which has a negative coefficient of -32.64, indicating that larger properties with more bedrooms have diminishing price returns. The sqft variable has a strong positive impact (1152.06 per additional square foot), highlighting size as a key driver of value. The hoa_month coefficient (267.83) shows a modest positive association with price, possibly reflecting higher costs in premium communities. With an adjusted $R^2$ of 0.6543, the model explains 65.3\% of the variance in property prices, and an RMSE of 719,452.71, the summary suggests a decent fit.
+
+@fig-dag represents the causal relationships between the variables analyzed in the regression model. It illustrates that property price is influenced by the number of bedrooms, bathrooms, square footage, and HOA fees. Square footage itself depends on the number of bedrooms and bathrooms, while HOA fees are linked to square footage. The directed arrows capture the assumed causal pathways, emphasizing that the effects of bedrooms and bathrooms on price are partly mediated through square footage.
+
 ```{r}
 full_model <- readRDS("../models/full_model.rds")
 reduced_model <- readRDS("../models/reduced_model.rds")
@@ -192,20 +197,33 @@ final_model <- readRDS("../models/final_model.rds")
 
 ```{r #tbl-summ}
 modelsummary(list(
-  # "Full" = full_model,
-  # "Reduced" = reduced_model,
   "Final Model" = final_model), output = "kableExtra",
   gof_omit = "BIC|AIC") |>
   column_spec(2, width = "2.5in")
 ```
 
-## Interpretation
-
-@tbl-summ shows the values of the model's coefficients mentioned in the setup. The intercept of -341,047.42 suggests that, without any additional predictors, property prices would begin at this negative baseline, though this value has limited standalone interpretation. The coefficient for beds is -159,574.45, meaning that, holding other factors constant, each additional bedroom is associated with a significant reduction in price. However, this effect is modified by the interaction term beds $\times$ sqft, which has a negative coefficient of -32.64, indicating that larger properties with more bedrooms have diminishing price returns. The sqft variable has a strong positive impact (1152.06 per additional square foot), highlighting size as a key driver of value. The hoa_month coefficient (267.83) shows a modest positive association with price, possibly reflecting higher costs in premium communities. With an adjusted $R^2$ of 0.6543, the model explains 65.3\% of the variance in property prices, and an RMSE of 719,452.71, the summary suggests a decent fit.
+```{r fig-dag, fig.width=4, fig.height=3, fig.cap='Multiple Causal Relationships Among Model Variables'}
+dagify(
+  price ~ beds,
+  price ~ sqft,
+  price ~ baths,
+  price ~ hoa,
+  sqft ~ beds,
+  sqft ~ baths,
+  baths ~ beds,
+  hoa ~ sqft,
+  coords = list(
+    x = c(beds = 0.5, sqft = 1, baths = 0, price = 2, hoa = 1.5),
+    y = c(beds = 0, sqft = 1, baths = 1, price = 0, hoa = 1.5)
+  )
+) |>
+  ggdag() +
+  theme_void()
+```
 
 ## Validation
 
-The linear model was created using base R [@R] to fit the data and generate predictions, while the MLMetrics package [@mlmetrics] was used to evaluate performance. A train-test split of 70:30 was created with the rsample package [@rsample], with the model trained on the larger portion of the data and validated using out-of-sample testing on the remaining data. Key evaluation metrics included the Root Mean Square Error (RMSE) and the $R^2$ score. The model achieved an RMSE of 1,850,720, indicating the average prediction error in dollar terms, and an $R^2$ score of approximately 0.281, reflecting the proportion of variance in property prices explained by the model. Detailed diagnostics and further information are provided in the appendix.
+The linear model was created using base R [@R] to fit the data and generate predictions, while the MLMetrics package [@mlmetrics] was used to evaluate performance. A train-test split of 70:30 was created with the rsample package [@rsample], with the model trained on the larger portion of the data and validated using out-of-sample testing on the remaining data. Key evaluation metrics included the Root Mean Square Error (RMSE) and the $R^2$ score. The model achieved an RMSE of 1,850,720, indicating the average prediction error in dollar terms, and an $R^2$ score of approximately 0.281, reflecting the proportion of variance in property prices explained by the model. Detailed diagnostics and further information are provided in Appendix B.
 
 ## Alternate Models
 
@@ -277,7 +295,7 @@ Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proi
 
 # Additional Data Details
 
-```{r}
+```{r #tbl-dict}
 data_dictionary <- data.frame(
   Variable = c(
     "SALE TYPE", "SOLD DATE", "PROPERTY TYPE", "ADDRESS", "CITY", 
@@ -323,7 +341,7 @@ kable(data_dictionary, col.names = c("Variable", "Description"), align = "l")
 
 # Additional Model Details
 
-```{r, fig.width=6, fig.height=3}
+```{r fig-diagnostics, fig.width=6, fig.height=3.5, fig.cap='Visible Violations of Constant Variance and Normality Assumptions'}
 par(mfrow = c(1, 2))
 
 plot(fitted(final_model), resid(final_model), main = "Residual-Fitted Plot",
@@ -331,9 +349,9 @@ plot(fitted(final_model), resid(final_model), main = "Residual-Fitted Plot",
 qqnorm(resid(final_model));qqline(resid(final_model))
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
+@fig-diagnostics ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
 
-```{r}
+```{r #tbl-models}
 modelsummary(list(
   "Full" = full_model,
   "Reduced" = reduced_model), 
