@@ -21,6 +21,7 @@ cleaned_data <- read_parquet("data/cleaned_data/cleaned_data.parquet")
 model_data <- cleaned_data |>
   select(property_type, beds, baths, half_bath, sqft, days_on_market,
          hoa_month, property_age, price) |>
+  mutate(price = ifelse(price < quantile(price, 0.95), price, quantile(price, 0.95))) |>
   drop_na()
 
 # Setting seed for reproducibility
@@ -50,7 +51,7 @@ qqnorm(resid(model2));qqline(resid(model2))
 
 # Fitting model 3
 model3 <- lm(data = training_data, 
-             formula = price ~ beds + sqft + hoa_month + sqft:beds)
+             formula = price ~ beds + baths + sqft + hoa_month + sqft:beds)
 
 summary(model3)
 
