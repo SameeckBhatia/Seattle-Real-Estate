@@ -24,7 +24,7 @@ execute:
 #| include: FALSE
 
 library(tidyverse)
-library(palmerpenguins)
+library(rsample)
 library(kableExtra)
 library(arrow)
 library(stargazer)
@@ -82,13 +82,13 @@ The primary goal of this paper is to estimate the outcome variable, price, using
 p1 <- data |>
   select(price) |>
   ggplot(aes(x = price)) +
-  geom_histogram(binwidth = 1000000, fill = "beige", color = "black") +
+  geom_histogram(binwidth = 1000000, fill = "#519C7C", color = "black") +
   labs(x = "Price ($)", y = "Count")
 
 p2 <- data |>
   select(price) |>
   ggplot(aes(x = log(price))) +
-  geom_histogram(binwidth = 0.25, fill = "beige", color = "black") +
+  geom_histogram(binwidth = 0.25, fill = "#519C7C", color = "black") +
   labs(x = " ln(Price)", y = "Count")
 
 ggarrange(p1, p2, labels = c("A", "B"))
@@ -109,13 +109,13 @@ ggarrange(p1, p2, labels = c("A", "B"))
 ```{r fig-pred1, fig.width=7, fig.height=2.5, fig.cap='Single Family Homes and 2 or 3 Bedrooms Properties Most Listing on the Market'}
 p3 <- data |> 
   ggplot(aes(x = property_type)) +
-  geom_bar(fill = "beige", color = "black") +
+  geom_bar(fill = "#519C7C", color = "black") +
   labs(x = "Property Type", y = "Count")
 
 p4 <- data |> 
   mutate(beds = as.factor(beds)) |>
   ggplot(aes(x = beds)) +
-  geom_bar(fill = "beige", color = "black") +
+  geom_bar(fill = "#519C7C", color = "black") +
   labs(x = "Beds", y = "Count")
 
 ggarrange(p3, p4, labels = c("C", "D"))
@@ -126,12 +126,12 @@ ggarrange(p3, p4, labels = c("C", "D"))
 ```{r fig-pred2, fig.width=7, fig.height=2.5, fig.cap='Skewed Distribution of Sizes and Most Properties Built Over the Last Decade'}
 p5 <- data |>
   ggplot(aes(x = sqft)) + 
-  geom_histogram(binwidth = 500, fill = "beige", color = "black") +
+  geom_histogram(binwidth = 500, fill = "#519C7C", color = "black") +
   labs(x = "Size (sqft)", y = NULL)
 
 p6 <- data |> 
   ggplot(aes(x = property_age)) + 
-  geom_histogram(binwidth = 10, fill = "beige", color = "black") +
+  geom_histogram(binwidth = 10, fill = "#519C7C", color = "black") +
   labs(x = "Property Age (years)", y = NULL)
 
 ggarrange(p5, p6, labels = c("E", "F"))
@@ -202,7 +202,7 @@ modelsummary(list(
   column_spec(2, width = "2.5in")
 ```
 
-```{r fig-dag, fig.width=4, fig.height=3, fig.cap='Multiple Causal Relationships Among Model Variables'}
+```{r fig-dag, fig.align='center', fig.width=4, fig.height=3, fig.cap='Multiple Causal Relationships Among Model Variables'}
 dagify(
   price ~ beds,
   price ~ sqft,
@@ -231,37 +231,66 @@ Several alternative models were considered before selecting the final one. The f
 
 # Results {#sec-results}
 
+```{r}
+set.seed(12)
+
+split <- initial_split(data, prop = 0.7)
+
+testing_data <- testing(split)
+```
+
+
 ## Result 1
 
-```{r, fig.align='center'}
-palmerpenguins::penguins |>
-  ggplot(aes(x = bill_depth_mm, y = bill_length_mm, color = species)) +
-  geom_point()
+```{r fig-scatter, fig.cap='Large Uncertainty in the Values of Luxury Homes and Mansions'}
+testing_data |>
+  mutate(predicted_price = predict(final_model, newdata = testing_data)) |>
+  drop_na() |>
+  ggplot(aes(x = predicted_price / 10^6, y = price / 10^6)) +
+  geom_point(color = "#519C7C", size = 1) +
+  geom_function(fun = function(x){x}, linetype = "dashed") +
+  scale_x_continuous(breaks = seq(0, 20, 2)) +
+  scale_y_continuous(breaks = seq(0, 20, 2)) +
+  labs(x = "Predicted Price ($ millions)", y = "Actual Price ($ millions)")
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+
+\newpage
 
 ## Result 2
 
-```{r, fig.align='center'}
-palmerpenguins::penguins |>
+```{r fig-col, fig.cap='Highest Average Predicted Listing Price in 85 Acre Gated Community'}
+testing_data |>
+  mutate(predicted_price = predict(final_model, newdata = testing_data)) |>
   drop_na() |>
-  ggplot(aes(x = sex, y = body_mass_g, fill = sex)) +
-  geom_boxplot(width = 0.5) +
-  coord_flip()
+  select(neighbourhood, predicted_price) |>
+  group_by(neighbourhood) |>
+  summarise(mean = mean(predicted_price / 10^6)) |>
+  arrange(desc(mean)) |>
+  head(n = 5) |>
+  ggplot(aes(x = reorder(neighbourhood, mean), y = mean)) +
+  geom_col(position = "dodge", fill = "#519C7C", color = "black") +
+  scale_y_continuous(breaks = seq(0, 5, 0.5)) +
+  coord_flip() +
+  labs(x = "Neighbourhood", y = "Mean Predicted Price ($ millions)")
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
 
+\newpage
+
 ## Result 3
 
-```{r, fig.align='center'}
-palmerpenguins::penguins |>
+```{r fig-box, fig.cap='Single Family Homes Valued Significantly Higher Than Other Property Types'}
+testing_data |>
+  mutate(predicted_price = predict(final_model, newdata = testing_data)) |>
   drop_na() |>
-  ggplot(aes(x = species, y = flipper_length_mm, fill = species)) +
-  geom_violin(alpha = 0.5) +
-  geom_boxplot(width = 0.25) +
-  coord_flip()
+  ggplot(aes(x = as.character(property_type), y = predicted_price / 10^6)) +
+  geom_boxplot(fill = "#519C7C", width = 0.25) +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(0, 8, 1)) +
+  labs(x = "Property Type", y = "Price ($ millions)")
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
