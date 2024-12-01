@@ -41,7 +41,7 @@ Seattle’s real estate market has experienced significant fluctuations since th
 
 This paper focuses on developing an accurate and accessible property valuation model tailored to Seattle’s housing market. The model incorporates current market data to provide fair value estimates for individual properties. The goal is to inform readers about the key factors driving real estate prices in Seattle while empowering them with a tool to make better home-buying decisions. By applying machine learning and statistical techniques, the model aims to ensure accuracy and reflect the intrinsic value of properties rather than merely their market prices. Existing valuation tools, such as Zillow’s “Zestimate” and Redfin’s proprietary estimates, have limitations. These models are often closed-source, leaving potential users unable to access the methodology or even the results without cost. This creates a significant gap in the availability of open, free, and transparent valuation tools. The absence of such tools denies buyers the advantage of comprehensive, unbiased information to assess property values independently. To address this gap, data was collected from Redfin’s semi-public dataset on current Seattle property listings. The analysis was conducted using the R programming language for data cleaning, testing, model creation, and result interpretation.
 
-**TO-DO: ** Estimand. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rhoncus scelerisque felis, vitae feugiat est mattis non. Morbi blandit felis non porttitor fermentum. Integer arcu metus, fringilla in mattis elementum, ornare et arcu. Integer ut tellus id tortor pulvinar posuere. In molestie quam eu mi efficitur ornare. Fusce et egestas felis, ac rhoncus nisl. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The primary estimand of this paper is the intrinsic value of a property. This value is determined using a linear regression model applied to observational data collected across Seattle. The analysis aims to identify the true value of a property that a buyer should consider paying and a seller should consider accepting. Additionally, it examines the main factors influencing a property’s intrinsic value and allows for comparison to market values.
 
 **TO-DO: ** Preliminary findings, significance. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rhoncus scelerisque felis, vitae feugiat est mattis non. Morbi blandit felis non porttitor fermentum. Integer arcu metus, fringilla in mattis elementum, ornare et arcu. Integer ut tellus id tortor pulvinar posuere. In molestie quam eu mi efficitur ornare. Fusce et egestas felis, ac rhoncus nisl. The paper is structured as follows: @sec-data introduces the dataset and variables. @sec-model outlines the model design and its significance. @sec-results presents the model’s predictions and actionable insights for buyers. Finally, @sec-discuss explores potential applications of the model in other cities, factors influencing property prices, and the generalizability of the model.
 
@@ -98,6 +98,8 @@ ggarrange(p1, p2, labels = c("A", "B"))
 **Property Type (`property_type`):** This categorical variable identifies the type of property for each observation, based on classifications set by the MLS. The three main property types included in the analysis are "Condo/Co-op," "Single Family," and "Townhouse." These classifications are critical for valuation, as different property types possess distinct features that influence their market value.
 
 **Number of Bedrooms (`beds`):** This numeric variable represents the count of full bedrooms in a property, as measured by appraisers. It is a key factor in the analysis, as more bedrooms often correlate with greater living space and the potential to accommodate larger households.
+
+**TO-DO:** Number of Bedrooms (`beds`): This numeric variable represents the count of full bedrooms in a property, as measured by appraisers. It is a key factor in the analysis, as more bedrooms often correlate with greater living space and the potential to accommodate larger households.
 
 **Property Size (`sqft`):** Measured in square feet, this variable reflects the total size of the property and is determined by appraisers. As the United States predominantly uses the imperial system, square footage is a standard unit. Larger properties generally hold more value, making this a significant predictor in property valuation.
 
@@ -186,7 +188,7 @@ The four features included in the model are `beds`, `sqft`, `hoa_month`, and `sq
 
 @fig-dag represents the causal relationships between the variables analyzed in the regression model. It illustrates that property price is influenced by the number of bedrooms, bathrooms, square footage, and HOA fees. Square footage itself depends on the number of bedrooms and bathrooms, while HOA fees are linked to square footage. The directed arrows capture the assumed causal pathways, emphasizing that the effects of bedrooms and bathrooms on price are partly mediated through square footage.
 
-```{r fig-dag, fig.width=4, fig.height=2.8, fig.cap='Multiple Causal Relationships Among Model Variables'}
+```{r fig-dag, fig.width=4, fig.height=3, fig.cap='Multiple Causal Relationships Among Model Variables'}
 dagify(
   price ~ beds,
   price ~ sqft,
@@ -197,8 +199,8 @@ dagify(
   baths ~ beds,
   hoa ~ sqft,
   coords = list(
-    x = c(beds = 0.5, sqft = 0.9, baths = 0, price = 2, hoa = 1.6),
-    y = c(beds = 0, sqft = 0.9, baths = 1, price = 0, hoa = 1.2)
+    x = c(beds = 0.5, sqft = 1, baths = 0, price = 2, hoa = 1.5),
+    y = c(beds = 0, sqft = 1, baths = 1, price = 0, hoa = 1.5)
   )
 ) |>
   ggdag() +
@@ -224,11 +226,11 @@ modelsummary(list(
 
 ## Validation
 
-The linear model was created using R [@R] to fit the data and generate predictions, while the MLMetrics package [@mlmetrics] was used to evaluate performance. A train-test split was created with the rsample package [@rsample], with the model trained on the 70\% of the data and validated using out-of-sample testing on the remaining 30\%. Key evaluation metrics included the Root Mean Square Error (RMSE) and $R^2$ The model achieved an RMSE of 331,564, indicating the average prediction error in dollar terms, and $R^2$ of approximately 0.716, reflecting the proportion of variance in property prices explained by the model. Further diagnostics and information are provided in Appendix B.
+The linear model was created using R [@R] to fit the data and generate predictions, while the MLMetrics package [@mlmetrics] was used to evaluate performance. A train-test split was created with the rsample package [@rsample], with the model trained on the 70\% of the data and validated using out-of-sample testing on the remaining 30\%. Key evaluation metrics included the Root Mean Square Error (RMSE) and $R^2$ The model achieved an RMSE of 331,564, indicating the average prediction error in dollar terms, and $R^2$ of approximately 0.717, reflecting the proportion of variance in property prices explained by the model. Further diagnostics and information are provided in Appendix B.
 
 ## Alternate Models
 
-Several alternative models were considered before selecting the final one. The first, a “full model,” included all variables in the cleaned dataset, achieving an RMSE of 1,864,966 and an $R^2$ score of 0.269. While this model used all available information, many variables were statistically insignificant. A reduced model was then tested by retaining only significant variables, resulting in an RMSE of 1,865,188 and an $R^2$ score of 0.269. Though concise, it performed similarly to the full model. The final model, incorporating an interaction term, outperformed both alternatives with an RMSE of 1,850,720 and an $R^2$ of 0.281.
+Several alternative models were considered before selecting the final one. The first, a “full model,” included all variables in the cleaned dataset, achieving an RMSE of 333,693.77 and an $R^2$ score of 0.714. While this model used all available information, some variables were statistically insignificant. A reduced model was then tested by retaining only significant variables, resulting in an RMSE of 333,736.71 and an $R^2$ score of 0.713. Though concise, it performed similarly to the full model. The final model, incorporating an interaction term, outperformed both alternatives with an RMSE of 331 563.51 and an $R^2$ of 0.717.
 
 # Results {#sec-results}
 
@@ -260,9 +262,9 @@ testing_data |>
   )
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-scatter ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
 
-\newpage
+
 
 ## Result 2
 
@@ -294,9 +296,9 @@ testing_data |>
   )
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-box ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
 
-\newpage
+
 
 ## Result 3
 
@@ -330,9 +332,9 @@ testing_data |>
   )
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-age ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
 
-\newpage
+
 
 ## Result 4
 
@@ -375,7 +377,7 @@ testing_data |>
   labs(fill = "Price \n($ millions)")
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-map ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
 
 \newpage
 
@@ -455,12 +457,15 @@ kable(data_dictionary, col.names = c("Variable", "Description"), align = "l")
 ```{r fig-diagnostics, fig.width=6, fig.height=3.5, fig.cap='Visible Violations of Constant Variance and Normality Assumptions'}
 par(mfrow = c(1, 2))
 
-plot(fitted(final_model), resid(final_model), main = "Residual-Fitted Plot",
+plot(fitted(final_model), resid(final_model), cex = 0.5,
+     main = "Residual-Fitted Plot",
      xlab="Fitted", ylab = "Residual")
-qqnorm(resid(final_model));qqline(resid(final_model))
+qqnorm(resid(final_model), cex = 0.5);qqline(resid(final_model))
 ```
 
 @fig-diagnostics ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
+
+@tbl-models ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
 
 ```{r #tbl-models}
 modelsummary(list(

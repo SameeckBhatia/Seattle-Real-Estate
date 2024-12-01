@@ -40,7 +40,7 @@ summary(model1)
 
 # Fitting model 2
 model2 <- lm(data = training_data, 
-             formula = price ~ beds + sqft + hoa_month)
+             formula = price ~ . - beds - baths)
 
 summary(model2)
 
