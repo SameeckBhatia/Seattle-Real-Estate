@@ -1,12 +1,12 @@
 ---
-title: "Valuing Real Estate in Seattle Using Property Characteristics: A Machine Learning Approach"
-subtitle: "Subtitle"
+title: "Capturing the True Value of Real Estate in Seattle Using Property Characteristics: A Machine Learning Approach"
+subtitle: "Location and Age Prove Key Determinants in Calculating Intrinsic Value"
 author:
   - Sameeck Bhatia
 date: today
 date-format: long
 thanks: "Code and data are available at [https://github.com/SameeckBhatia/Seattle-Real-Estate](https://github.com/SameeckBhatia/Seattle-Real-Estate)"
-abstract: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi faucibus ipsum dolor, in tincidunt justo tempor sit amet proin non turpis a orci imperdiet pretium. Aenean aliquam eros eu consectetur cursus. Proin vel tempor ante vestibulum felis nisi, ultricies sed porttitor in, viverra nec augue. Sed convallis a tortor in pretium. Vivamus metus ipsum, faucibus vitae turpis sed, sodales auctor dolor sed a orci id orci pulvinar tincidunt sed ut tellus. Morbi venenatis tempor arcu, a auctor dolor congue sit amet. Nam auctor tincidunt ligula rutrum aliquam. Sed facilisis at nulla et posuere."
+abstract: "**TO-DO:** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi faucibus ipsum dolor, in tincidunt justo tempor sit amet proin non turpis a orci imperdiet pretium. Aenean aliquam eros eu consectetur cursus. Proin vel tempor ante vestibulum felis nisi, ultricies sed porttitor in, viverra nec augue. Sed convallis a tortor in pretium. Vivamus metus ipsum, faucibus vitae turpis sed, sodales auctor dolor sed a orci id orci pulvinar tincidunt sed ut tellus. Morbi venenatis tempor arcu, a auctor dolor congue sit amet. Nam auctor tincidunt ligula rutrum aliquam. Sed facilisis at nulla et posuere."
 toc: true
 number-sections: true
 bibliography: references.bib
@@ -43,7 +43,7 @@ This paper focuses on developing an accurate and accessible property valuation m
 
 The primary estimand of this paper is the intrinsic value of a property. This value is determined using a linear regression model applied to observational data collected across Seattle. The analysis aims to identify the true value of a property that a buyer should consider paying and a seller should consider accepting. Additionally, it examines the main factors influencing a property’s intrinsic value and allows for comparison to market values.
 
-**TO-DO: ** Preliminary findings, significance. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rhoncus scelerisque felis, vitae feugiat est mattis non. Morbi blandit felis non porttitor fermentum. Integer arcu metus, fringilla in mattis elementum, ornare et arcu. Integer ut tellus id tortor pulvinar posuere. In molestie quam eu mi efficitur ornare. Fusce et egestas felis, ac rhoncus nisl. The paper is structured as follows: @sec-data introduces the dataset and variables. @sec-model outlines the model design and its significance. @sec-results presents the model’s predictions and actionable insights for buyers. Finally, @sec-discuss explores potential applications of the model in other cities, factors influencing property prices, and the generalizability of the model.
+Preliminary findings indicate that the model effectively predicts property prices, though deviations occur at extreme price ranges. These discrepancies suggest that additional factors, such as high-end amenities and neighborhood characteristics, play a significant role in influencing property value. Understanding these dynamics is important in incorporating socio-economic and structural variables into property valuation models, ultimately improving their accuracy and real-world applicability. The paper is structured as follows: @sec-data introduces the dataset and variables. @sec-model outlines the model design and its significance. @sec-results presents the model’s predictions and actionable insights for buyers. Finally, @sec-discuss explores potential applications of the model in other cities, factors influencing property prices, and the generalizability of the model.
 
 # Data {#sec-data}
 
@@ -75,8 +75,6 @@ For property prices, appraisers typically estimate values based on the prices of
 
 ## Outcome Variables
 
-The primary goal of this paper is to estimate the outcome variable, price, using a valuation model. This variable represents the market value of active listings at the time of data collection, focusing exclusively on properties located in Seattle. @fig-out provides insights into the distribution of property prices. Plot A shows that property prices are highly skewed, with a maximum value near \$40,000,000 and several listings exceeding \$5,000,000. To better understand the distribution, Plot B presents the logarithmic transformation of property prices. While the transformed distribution is less extreme, it remains skewed, indicating the presence of properties with exceptionally high valuations in the Seattle real estate market.
-
 ```{r fig-out, fig.width=7, fig.height=2.5, fig.cap='Heavily Skewed Property Prices and Skewed Still for Logarithmic Prices'}
 p1 <- data |>
   select(price) |>
@@ -93,19 +91,19 @@ p2 <- data |>
 ggarrange(p1, p2, labels = c("A", "B"))
 ```
 
+The primary goal of this paper is to estimate the outcome variable, price, using a valuation model. This variable represents the market value of active listings at the time of data collection, focusing exclusively on properties located in Seattle. @fig-out provides insights into the distribution of property prices. Plot A shows that property prices are highly skewed, with a maximum value near \$40,000,000 and several listings exceeding \$5,000,000. To better understand the distribution, Plot B presents the logarithmic transformation of property prices. While the transformed distribution is less extreme, it remains skewed, indicating the presence of properties with exceptionally high valuations in the Seattle real estate market.
+
 ## Predictor Variables
 
 **Property Type (`property_type`):** This categorical variable identifies the type of property for each observation, based on classifications set by the MLS. The three main property types included in the analysis are "Condo/Co-op," "Single Family," and "Townhouse." These classifications are critical for valuation, as different property types possess distinct features that influence their market value.
 
 **Number of Bedrooms (`beds`):** This numeric variable represents the count of full bedrooms in a property, as measured by appraisers. It is a key factor in the analysis, as more bedrooms often correlate with greater living space and the potential to accommodate larger households.
 
-**TO-DO:** Number of Bedrooms (`beds`): This numeric variable represents the count of full bedrooms in a property, as measured by appraisers. It is a key factor in the analysis, as more bedrooms often correlate with greater living space and the potential to accommodate larger households.
+**TO-DO:** Number of Bathrooms (`baths`): This numeric variable represents the count of full bathrooms in a property, as measured by appraisers. It is a key factor in the analysis, as more bathrooms often correlate with greater living space and the potential to accommodate larger households.
 
 **Property Size (`sqft`):** Measured in square feet, this variable reflects the total size of the property and is determined by appraisers. As the United States predominantly uses the imperial system, square footage is a standard unit. Larger properties generally hold more value, making this a significant predictor in property valuation.
 
 **Property Age (`property_age`):** This derived variable calculates the age of a property in years, based on the difference between the year of data collection and the `year_built`. Age is a vital consideration in determining price, as newer properties are often smaller due to rising construction costs and increasingly strict zoning regulations.
-
-@fig-pred1 represents the distributions of property types and number of bedrooms. Plot C shows that single-family homes are the most common, followed closely by condos, with townhouses being the least prevalent. This likely reflects the mix of apartments and houses present in Seattle's real estate market. Plot D highlights that properties with 2 or 3 bedrooms are most frequent, while some properties even have north of 7 bedrooms. This is likely because condos typically feature 1-2 bedrooms, whereas single-family homes and townhouses commonly have 3-4 bedrooms.
 
 ```{r fig-pred1, fig.width=7, fig.height=2.5, fig.cap='Single Family Homes and 2 or 3 Bedrooms Properties Most Listing on the Market'}
 p3 <- data |> 
@@ -122,7 +120,7 @@ p4 <- data |>
 ggarrange(p3, p4, labels = c("C", "D"))
 ```
 
-@fig-pred2 displays the distributions of property size and age. Plot E shows that property size is positively skewed, with most properties under 2,500 square feet and a peak between 700 and 1,200 square feet. Properties exceeding 5,000 square feet likely represent luxury homes or mansions. Plot F indicates that property age is also positively skewed, with the most common properties being less than 10 years old. The second most common group is 20-30 years old, likely reflecting construction surges before the 2008 financial crisis and real estate market downturn.
+@fig-pred1 represents the distributions of property types and number of bedrooms. Plot C shows that single-family homes are the most common, followed closely by condos, with townhouses being the least prevalent. This likely reflects the mix of apartments and houses present in Seattle's real estate market. Plot D highlights that properties with 2 or 3 bedrooms are most frequent, while some properties even have north of 7 bedrooms. This is likely because condos typically feature 1-2 bedrooms, whereas single-family homes and townhouses commonly have 3-4 bedrooms.
 
 ```{r fig-pred2, fig.width=7, fig.height=2.5, fig.cap='Skewed Distribution of Sizes and Most Properties Built Over the Last Decade'}
 p5 <- data |>
@@ -137,6 +135,8 @@ p6 <- data |>
 
 ggarrange(p5, p6, labels = c("E", "F"))
 ```
+
+@fig-pred2 displays the distributions of property size and age. Plot E shows that property size is positively skewed, with most properties under 2,500 square feet and a peak between 700 and 1,200 square feet. Properties exceeding 5,000 square feet likely represent luxury homes or mansions. Plot F indicates that property age is also positively skewed, with the most common properties being less than 10 years old. The second most common group is 20-30 years old, likely reflecting construction surges before the 2008 financial crisis and real estate market downturn.
 
 # Model {#sec-model}
 
@@ -247,7 +247,7 @@ testing_data <- testing_data |>
   drop_na()
 ```
 
-## Result 1
+## Higher Prices Associated with Higher Prediction Errors
 
 ```{r fig-scatter, fig.cap='Large Uncertainty in the Predicted Values of Luxury Homes'}
 testing_data |>
@@ -262,11 +262,9 @@ testing_data |>
   )
 ```
 
-@fig-scatter ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-scatter shows the model-predicted prices alongside the actual price observations from the data. The dashed line represents the line of equality, where the predicted price matches the actual property price. Some data points deviate from this line, particularly at lower values, which is expected since no model can perfectly capture all variations in the data. In this case, the deviations may result from missing factors that could enhance the property valuation model. However, when property values exceed approximately 2 million dollars, the actual prices deviate significantly from the line of equality. This indicates higher prediction errors, likely due to a combination of internal and external factors. Internal factors might include additional amenities (e.g., pools, large gardens, or extra rooms) or premium furnishings (e.g., expensive flooring or tiling), which increase lot size or property desirability, driving up prices. External factors may include the property’s location in high-income neighborhoods or proximity to desirable features such as beaches, shopping malls, or tourist attractions. These influences are analyzed further in @fig-map.
 
-
-
-## Result 2
+## Similar Distributions to Market Price from the Model
 
 ```{r fig-box, fig.cap="Single Family Homes Valued the Highest Among All Property Types"}
 testing_data |>
@@ -296,11 +294,9 @@ testing_data |>
   )
 ```
 
-@fig-box ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-box illustrates the distributions of actual and predicted prices based on MLS-classified property types. Condos have the lowest median prices, followed by townhouses, with single-family homes being the most expensive. This pricing trend is primarily influenced by the size of each property type, which plays a significant role in determining value. The predicted and actual distributions for all property types show similar shapes, although there are differences in their centers and outliers. The model predicts slightly higher intrinsic values for townhouses and condos compared to the actual prices, whereas there is a notable difference in the median price for single-family homes. This discrepancy is likely due to the real estate market being in a cooling phase, with prices remaining relatively stable over the past six months. Additionally, while market prices are subject to short-term fluctuations, intrinsic values tend to remain more consistent.
 
-
-
-## Result 3
+## Influence of the Time Effect on Property Valuation
 
 ```{r fig-age, fig.cap='40 Year Old Homes Among the Lowest in Actual and Predicted Values'}
 testing_data |>
@@ -332,13 +328,11 @@ testing_data |>
   )
 ```
 
-@fig-age ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-age highlights the trend between property age and the predicted and actual average prices. The relationship can be divided into three stages. First, the average price for brand-new properties starts at around 1 million dollars, followed by a gradual decrease as the properties age. This decline is expected, as older properties typically lose value due to higher upkeep costs and reduced desirability. Next, the average price bottoms out when properties reach around 40 years of age. This likely represents a threshold where property age significantly affects market value (for actual prices) or true value (for predicted prices). In the third stage, average prices increase for properties over 50 years old, continuing to rise for homes built a century ago. While this may seem counterintuitive given the earlier trend, it likely reflects the premium placed on vintage properties. Such homes often have historical significance, unique architectural features, or are built on highly desirable land, all of which enhance their perceived and intrinsic value.
 
+## Noticeable Clusters for High-End Properties
 
-
-## Result 4
-
-```{r fig-map, fig.cap="Highest Average Predicted Listing Price in Seattle's 85 Acre Gated Community"}
+```{r fig-map, fig.cap="Highest Predicted Listing Prices in Seattle's Largest Gated Communities"}
 zip_codes <- st_read("../data/spatial_data/zip-codes.geojson", quiet = TRUE) |>
   rename(zip_code = ZCTA5CE10) |> 
   select(zip_code, geometry)
@@ -346,8 +340,8 @@ zip_codes <- st_read("../data/spatial_data/zip-codes.geojson", quiet = TRUE) |>
 testing_data |>
   group_by(zip_code) |>
   summarise(
-    mean_price = mean(price) / 10^6,
-    mean_predicted = mean(predicted_price) / 10^6,
+    mean_price = median(price) / 10^6,
+    mean_predicted = median(predicted_price) / 10^6,
     .groups = "drop"
   ) |>
   pivot_longer(
@@ -374,29 +368,30 @@ testing_data |>
     axis.text.y = element_blank(),
     axis.ticks = element_blank()
   ) +
-  labs(fill = "Price \n($ millions)")
+  labs(fill = "Median Price \n($ millions)")
 ```
 
-@fig-map ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse accumsan elementum diam sed ullamcorper. Integer sodales posuere mauris, sit amet blandit tortor scelerisque non. Nulla ut sapien vel orci scelerisque varius malesuada vel lorem. Integer sit amet enim mattis nisi porttitor sodales nec vitae odio. Vivamus eget rutrum erat. Ut dictum quis ligula non euismod. Fusce sit amet egestas nibh. In rutrum tortor sed nulla volutpat facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc non sapien lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce nec magna nec leo convallis dignissim ut porta justo. Curabitur nec faucibus orci. Sed fringilla elit vel sapien rutrum, ut egestas nisl bibendum. Donec faucibus suscipit enim, porttitor suscipit ex commodo egestas. Morbi eget odio nisi. Curabitur posuere scelerisque libero, non pharetra ex scelerisque.
+@fig-map presents the spatial distribution of median property values across Seattle, categorized by ZIP code. Two distinct patterns emerge from both maps: first, two ZIP codes stand out with the highest median listing prices; second, property values decrease the farther south they are in the city. The model captures these patterns well, showing similar clusters. The two ZIP codes with the darkest shades correspond to the Broadmoor and Broadview neighborhoods, which are 85- and 1,100-acre gated communities with affluent residents and amenities such as golf courses. These communities share features like higher incomes, better security, and a higher standard of living, enabling them to support significantly higher property values. Conversely, neighborhoods in southern Seattle tend to have lower incomes, higher crime rates, and less development, and evidently lower property values. These factors collectively explain the disparities in property values across the city. These disparities reflect broader socio-economic trends in urban areas, where wealthier neighborhoods often attract more investment in infrastructure, public services, and amenities, driving property values higher.
 
 \newpage
 
 # Discussion {#sec-discuss}
 
-## Discussion 1
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+## Examining Racial Bias in Real Estate Price Estimates
+
+**TO-DO:** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
 
 Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
 
-## Discussion 2
+## Using Alternative Algorithms for Nonlinear Price Trends
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+**TO-DO:** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
 
 Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
 
-## Discussion 3
+## Including External Factors into Property Valuation Models
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
+**TO-DO:** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus eleifend, vehicula dolor vitae, aliquet nibh. Curabitur ac leo non nunc ultrices dignissim. Phasellus faucibus elit id nulla pretium volutpat. Proin ullamcorper, nulla sit amet tempor faucibus, mi ligula interdum urna, eu condimentum arcu augue nec leo. Curabitur vulputate imperdiet nulla eu finibus. Vivamus sem lectus, commodo in lectus quis, posuere laoreet quam. Etiam nunc libero, faucibus nec porta a, dignissim a nisi. Phasellus laoreet elementum turpis a vestibulum. Quisque in urna varius, lobortis eros eu, blandit sapien. In lobortis orci id nunc facilisis, non tempor nisl ultricies. Sed pellentesque tortor cursus ipsum fringilla interdum. Cras lacinia tempor placerat. Proin eu elit elit. Sed molestie dolor et posuere sodales.
 
 Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proin malesuada, nunc et accumsan pellentesque, odio felis molestie augue, nec gravida lectus ipsum ut lectus. Donec at malesuada purus. Cras ultrices vitae metus eget aliquet. Aliquam sollicitudin elit placerat, porta mauris in, semper felis. Nulla vestibulum dolor sed tempor efficitur. In bibendum libero ex, in sollicitudin arcu maximus porttitor. Pellentesque ac sapien sit amet magna ornare auctor. In hac habitasse platea dictumst. Cras ut urna dapibus elit mattis aliquam non sed augue. Suspendisse lacinia ornare consectetur. Quisque ultricies tortor non ullamcorper porta. Mauris ac leo quis lacus tincidunt cursus ut id felis.
 
@@ -407,6 +402,8 @@ Fusce aliquam tempus tincidunt. Nulla viverra non nibh consectetur blandit. Proi
 # Appendix {-}
 
 # Additional Data Details
+
+## Raw Data Dictionary
 
 ```{r #tbl-dict}
 data_dictionary <- data.frame(
@@ -454,6 +451,8 @@ kable(data_dictionary, col.names = c("Variable", "Description"), align = "l")
 
 # Additional Model Details
 
+## Model Diagnostics
+
 ```{r fig-diagnostics, fig.width=6, fig.height=3.5, fig.cap='Visible Violations of Constant Variance and Normality Assumptions'}
 par(mfrow = c(1, 2))
 
@@ -463,9 +462,13 @@ plot(fitted(final_model), resid(final_model), cex = 0.5,
 qqnorm(resid(final_model), cex = 0.5);qqline(resid(final_model))
 ```
 
-@fig-diagnostics ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
+**TO-DO:** @fig-diagnostics ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
 
-@tbl-models ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
+\newpage
+
+## Alternate Model Summaries
+
+**TO-DO:** @tbl-models ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae pretium velit. Etiam fermentum enim ac venenatis fringilla. Nulla imperdiet metus ac ligula ultricies, at cursus eros varius. Curabitur commodo pretium ornare. Pellentesque ultrices sapien ut lectus viverra placerat. Mauris nec interdum tortor. Cras posuere turpis sed mi blandit dictum. Etiam accumsan ipsum quis sem ornare cursus. Aenean ligula mauris, vulputate a volutpat dapibus, consectetur a lacus. Nullam ornare placerat risus, in luctus urna. Ut molestie dignissim turpis, eget tincidunt arcu. Vivamus auctor fermentum lectus, eu vulputate tortor volutpat et. Aenean aliquam nulla eget felis faucibus faucibus ut nec nisi.
 
 ```{r #tbl-models}
 modelsummary(list(
@@ -474,6 +477,14 @@ modelsummary(list(
   output = "kableExtra") |>
   column_spec(2, width = "2in")
 ```
+
+# Surveys, Sampling, and Observational Data
+
+**TO-DO:** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eu hendrerit mauris, in sodales mi. Aenean eget urna rutrum, tristique lorem vel, maximus ipsum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc eget rutrum est. Donec tempor elit non nulla cursus, in consectetur est ullamcorper. Nam vitae porttitor felis, tempor maximus leo. Aenean ultricies molestie facilisis. Donec eget gravida eros, sit amet ornare erat. Cras a vehicula nibh. Nunc ac ligula malesuada, bibendum ante eu, luctus felis. Proin in tellus eu diam aliquam ultricies.
+
+Duis sit amet augue sagittis, commodo eros sollicitudin, congue libero. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas convallis erat velit, eu consequat massa posuere et. Nullam tempor purus sit amet quam lacinia euismod. Praesent sagittis risus sit amet odio porttitor, eget pellentesque turpis luctus. Proin feugiat convallis diam, id vulputate mauris. Nunc facilisis quam nec tristique pellentesque. Sed laoreet tortor at ipsum faucibus iaculis. Sed cursus convallis molestie. Aliquam et accumsan tortor. Morbi volutpat rutrum elit sed fermentum. In vestibulum placerat eros, et consectetur lacus fringilla a. Mauris elementum velit vel eros placerat, eget commodo nisi convallis. Sed ac nisi mi. Nullam malesuada auctor semper.
+
+Vestibulum at tortor ipsum. Quisque a elit ut odio suscipit fringilla ac ut nunc. Vivamus eget neque vel est iaculis sollicitudin in et turpis. Pellentesque quis risus ullamcorper metus porta viverra. In hac habitasse platea dictumst. In faucibus, sapien sed placerat semper, sapien lectus placerat leo, sit amet tempus risus dolor non erat. Morbi ac urna venenatis, pellentesque odio vel, iaculis tellus. Etiam tincidunt fringilla suscipit. Donec fermentum sollicitudin metus, quis tempor leo elementum eu.
 
 \newpage
 
