@@ -10,7 +10,7 @@ The repo is structured as follows:
 
 -   `data` contains all data (simulation, raw, analysis, and spatial) relevant to the research.
 -   `model` contains fitted models. 
--   `other` contains relevant literature, details about LLM chat interactions, sketches, files of an idealized survey, and images of model summaries.
+-   `other` contains relevant literature, details about LLM chat interactions, sketches, and a datasheet for the raw data.
 -   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
 -   `scripts` contains the R scripts used to simulate, download and clean data.
 
