@@ -24,6 +24,9 @@ raw_5bed <- read_csv("data/raw_data/raw_5bed.csv")
 # Merging the data
 raw_data <- rbind(raw_0bed, raw_1bed, raw_2bed, raw_3bed, raw_4bed, raw_5bed)
 
+# Exporting raw data
+write_csv(raw_data, "data/raw_data/raw_data.csv")
+
 # Cleaning the data
 cleaned_data <- raw_data |>
   clean_names() |>
